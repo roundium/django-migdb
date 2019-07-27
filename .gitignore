@@ -396,3 +396,6 @@ pip-selfcheck.json
 .history
 
 # End of https://www.gitignore.io/api/git,node,venv,linux,python,django,virtualenv,pycharm+all,visualstudiocode
+
+# vscode
+.vscode/
