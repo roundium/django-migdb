@@ -1,0 +1,16 @@
+include LICENSE
+include README.md
+recursive-exclude .*
+include AUTHORS
+include Gruntfile.js
+include INSTALL
+include MANIFEST.in
+graft django
+graft docs
+graft extras
+graft js_tests
+graft scripts
+graft tests
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude tests*
