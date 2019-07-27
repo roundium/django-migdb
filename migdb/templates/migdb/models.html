@@ -1,4 +1,4 @@
-{% load model_fields %}
+{% load model_fields static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,15 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Models</title>
+    
 </head>
 <body>
+    current app name: {{ app_name }}<br>
+    destination app name: <input type="text" id="dest_appname" /><br>
+    <hr>
     {% for name, model in models %}
-        {{ name }} <br>
-        fields:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;current model: {{ name }} <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;new model: <input type="text" id="{{ name }}_new_model" /><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;fields:<br>
         {% for field in model|model_fields %}
-            fields: {{ field }} <br>
-            name: {{ field.name }}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field: {{ field }} <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: {{ field.name }}<br>
         {% endfor %}<br>
     {% endfor %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'migdb/js/base.js' %}"></script>
 </body>
 </html>

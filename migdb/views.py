@@ -23,5 +23,6 @@ class ModelsList(TemplateView):
         # for name, model  in apps.all_models[app_name].items():
         #     if model is User:
         #         print(True)
+        context['app_name'] = app_name
         context["models"] = apps.all_models[app_name].items()
         return context
