@@ -1,3 +1,4 @@
+{% load model_fields %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,9 @@
     <title>Fields</title>
 </head>
 <body>
-
+    {% for field in fields %}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field: {{ field }} <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: {{ field.name }}<br>
+    {% endfor %}<br>
 </body>
 </html>

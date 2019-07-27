@@ -26,3 +26,19 @@ class ModelsList(TemplateView):
         context['app_name'] = app_name
         context["models"] = apps.all_models[app_name].items()
         return context
+
+
+class FieldsList(TemplateView):
+    template_name = 'migdb/fields.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        app_name = self.request.GET.get("app_name", None)
+        model_name = self.request.GET.get("model_name", None)
+
+        model = apps.get_model(app_label=app_name, model_name=model_name)
+
+        context['app_name'] = app_name
+        context['model_name'] = model_name
+        context["fields"] = model._meta.get_fields()
+        return context
