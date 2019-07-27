@@ -8,9 +8,13 @@
     <title>Fields</title>
 </head>
 <body>
-    {% for field in fields %}
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field: {{ field }} <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: {{ field.name }}<br>
-    {% endfor %}<br>
+    <form action="post">
+        <input type="hidden" name="app_name" value="{{ app_name }}"/>
+        <input type="hidden" name="model_name" value="{{ model_name }}"/>
+        {% for field in fields %}
+            field: {{ field }} <br>
+            name: {{ field.name }}<br>
+        {% endfor %}<br>
+    </form>
 </body>
 </html>
