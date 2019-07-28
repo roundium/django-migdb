@@ -3,6 +3,8 @@ from django.views.generic import TemplateView, FormView
 from django.apps import apps
 from django.contrib.auth.models import Permission, User
 from django.forms import formset_factory
+import json
+import os
 
 
 from .forms import FieldForm
@@ -50,16 +52,34 @@ class FieldsList(FormView):
         formset = self.form(request.POST)
         if not formset.is_valid():
             print(formset.errors)
-        for form in formset:
-            print(form.cleaned_data)
+            return
         app_name = request.GET.get("app_name", None)
         model_name = request.GET.get("model_name", None)
         new_app_name = request.GET.get("new_app_name", app_name)
 
-        # model = apps.get_model(app_label=app_name, model_name=model_name)
+        data = {}
+        data['app_name'] = app_name
+        data['new_app_name'] = new_app_name
+        model_structure = {
+            'current_name': model_name,
+            'new_name': model_name,
+            'fields': []
+        }
+        for form in formset:
+            field_data = {k: v for k, v in form.cleaned_data.items() if v}
+            model_structure['fields'].append(field_data)
+        data['models'] = []
+        data['models'].append(model_structure)
 
-        print("app_name", app_name)
-        print("model_name", model_name)
-        print("new_app_name", new_app_name)
+        if os.path.isfile('app_name_structure.json'):
+            with open('app_name_structure.json', 'r') as the_file:
+                content = the_file.read()
+                content = json.loads(content)
+            content['models'].append(model_structure)
+            with open('app_name_structure.json', 'w') as the_file:
+                the_file.write(json.dumps(content))
+        else:
+            with open('app_name_structure.json', 'w') as the_file:
+                the_file.write(json.dumps(data))
 
         return redirect("migdb:apps_list")

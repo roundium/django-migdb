@@ -8,6 +8,7 @@ ACTIONS = (
     ("replace", "Replace"),
     ("prefix", "Add Prefix"),
     ("postfix", "Add Postfix"),
+    ("format", "Format"),
 )
 
 class FieldForm(forms.Form):
@@ -20,13 +21,4 @@ class FieldForm(forms.Form):
     replace_value = forms.CharField(max_length=255, required=False)
     prefix_value = forms.CharField(max_length=255, required=False)
     postfix_value = forms.CharField(max_length=255, required=False)
-
-    # def clean(self):
-    #     if self.cleaned_data['action'] == 'rename':
-    #         self.cleaned_data['new_field_name'] = self.data['new_field_name']
-    #     elif self.cleaned_data['action'] == 'replace':
-    #         self.cleaned_data['replace_value'] = self.data['replace_value']
-    #     elif self.cleaned_data['action'] == 'prefix':
-    #         self.cleaned_data['prefix_value'] = self.data['prefix_value']
-    #     elif self.cleaned_data['action'] == 'postfix':
-    #         self.cleaned_data['postfix_value'] = self.data['postfix_value']
+    format_value = forms.CharField(max_length=255, required=False)

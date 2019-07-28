@@ -16,6 +16,10 @@ function action_changes(obj, div_id, forloop_coun){
         $("#" + div_id).html(
             'postfix value: <input type="text" name="form-' + forloop_coun + '-postfix_value" required/>'
         )
+    }else if(user_action == 'format'){
+        $("#" + div_id).html(
+            'format value: <input type="text" name="form-' + forloop_coun + '-format_value" required/> -> {current_value} for field default value'
+        )
     }else if(user_action == 'nochange'){
         $("#" + div_id).html('')
     }
