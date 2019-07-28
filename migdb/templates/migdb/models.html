@@ -9,13 +9,22 @@
 </head>
 <body>
     current app name: {{ app_name }}<br>
-    destination app name: <input type="text" id="dest_appname" /><br>
+    destination app name: <input onkeyup='update_url(this)' type="text" id="dest_appname" /><br>
     <hr>
     {% for name, model in models %}
-        <a href="{% url 'migdb:fields_list' %}?app_name={{ app_name }}&model_name={{ name }}">{{ name }}</a><br>
-    {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;current model: {{ name }} <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;new model: <input type="text" id="{{ name }}_new_model" /><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;fields:<br> {% endcomment %}
+        <a onclick='submit_url("{{ name }}")' href="#">{{ name }}</a><br>
     {% endfor %}
+
+    <script>
+            var url = "{% url 'migdb:fields_list' %}?app_name={{ app_name }}";
+            var new_app_name = "";
+            function update_url(input_value){
+                new_app_name = input_value.value;
+            }
+            function submit_url(model_name){
+                submit_url_string = window.location.protocol + "//" + window.location.host + url + "&model_name=" + model_name + "&new_app_name=" + new_app_name;
+                window.open(url, '_parent');
+            }
+    </script>
 </body>
 </html>

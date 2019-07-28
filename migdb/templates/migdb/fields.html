@@ -1,4 +1,4 @@
-{% load model_fields %}
+{% load model_fields static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,13 +8,42 @@
     <title>Fields</title>
 </head>
 <body>
-    <form action="post">
+    <form method="POST" action="">
+        <input type="hidden" name="form-TOTAL_FORMS" value="{{ fields|length }}"/>
+        <input type="hidden" name="form-INITIAL_FORMS" value="0"/>
+        <input type="hidden" name="form-MAX_NUM_FORMS" value=""/>
+
+        {% csrf_token %}
         <input type="hidden" name="app_name" value="{{ app_name }}"/>
         <input type="hidden" name="model_name" value="{{ model_name }}"/>
+        <input type="hidden" name="new_app_name" value="{{ new_app_name }}"/>
         {% for field in fields %}
-            field: {{ field }} <br>
-            name: {{ field.name }}<br>
+            <div>
+                name: {{ field.name }}
+                <input type="hidden" name="form-{{ forloop.counter0 }}-current_field_name" value="{{ field.name }}"/>
+
+                {% if field|check_fk %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="fk" />
+                {% endif %}
+                {% if field|check_m2m %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />
+                {% endif %}
+
+                ====> action: <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" id="field_{{ field.name }}_actions">
+                    <option value="nochange" selected>No Change</option>
+                    <option value="rename">Rename</option>
+                    <option value="replace">Replace</option>
+                    <option value="prefix">Add Prefix</option>
+                    <option value="postfix">Add Postfix</option>
+                </select>
+                <div id="field_{{ field.name }}">
+                </div>
+
+            </div><br>
         {% endfor %}<br>
+        <input type="submit" value="Submit" />
     </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'migdb/js/base.js' %}"></script>
 </body>
 </html>

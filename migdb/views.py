@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from django.apps import apps
 from django.contrib.auth.models import Permission, User
+from django.forms import formset_factory
+
+
+from .forms import FieldForm
 
 
 class AppsList(TemplateView):
@@ -9,8 +13,6 @@ class AppsList(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        for app in apps.get_app_configs():
-            print(dir(app))
         context["apps"] = apps.get_app_configs()
         return context
 
@@ -20,25 +22,44 @@ class ModelsList(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         app_name = self.request.GET.get("app_name", None)
-        # for name, model  in apps.all_models[app_name].items():
-        #     if model is User:
-        #         print(True)
         context['app_name'] = app_name
         context["models"] = apps.all_models[app_name].items()
         return context
 
 
-class FieldsList(TemplateView):
+class FieldsList(FormView):
     template_name = 'migdb/fields.html'
+    form = formset_factory(FieldForm)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        app_name = self.request.GET.get("app_name", None)
-        model_name = self.request.GET.get("model_name", None)
+    def get(self, request, *args, **kwargs):
+        app_name = request.GET.get("app_name", None)
+        model_name = request.GET.get("model_name", None)
+        new_app_name = request.GET.get("new_app_name", app_name)
 
         model = apps.get_model(app_label=app_name, model_name=model_name)
 
+        context = {}
         context['app_name'] = app_name
         context['model_name'] = model_name
+        context['new_app_name'] = new_app_name
         context["fields"] = model._meta.get_fields()
-        return context
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        formset = self.form(request.POST)
+        if not formset.is_valid():
+            print(formset.errors)
+        for form in formset:
+            print(form.cleaned_data)
+        app_name = request.GET.get("app_name", None)
+        model_name = request.GET.get("model_name", None)
+        new_app_name = request.GET.get("new_app_name", app_name)
+
+        # model = apps.get_model(app_label=app_name, model_name=model_name)
+
+        print("app_name", app_name)
+        print("model_name", model_name)
+        print("new_app_name", new_app_name)
+
+        return redirect("migdb:apps_list")
