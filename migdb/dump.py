@@ -42,14 +42,21 @@ class DumpGenerator(Thread):
                     current_field_name = field['current_field_name']
                     m2m_check = field.get('m2m', None)
                     fk_check = field.get('fk', None)
+                    o2o_check = field.get('o2o', None)
 
                     if m2m_check:
                         values = getattr(data_item, current_field_name)
-                        temp_data['fields'][current_field_name] = [item.id for item in values.all()]
+                        if action == 'nochange':
+                            temp_data['fields'][current_field_name] = [item.id for item in values.all()]
+                        elif action == 'rename':
+                            temp_data['fields'][field['new_field_name']] = [item.id for item in values.all()]
                         continue
-                    if fk_check:
+                    if fk_check or o2o_check:
                         values = getattr(data_item, current_field_name + "_id")
-                        temp_data['fields'][current_field_name + "_id"] = values
+                        if action == 'nochange':
+                            temp_data['fields'][current_field_name + "_id"] = values
+                        elif action == 'rename':
+                            temp_data['fields'][field['new_field_name']] = values
                         continue
                     if action == 'nochange':
                         temp_data['fields'][current_field_name] = getattr(data_item, current_field_name)

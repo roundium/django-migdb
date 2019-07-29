@@ -16,6 +16,7 @@ class FieldForm(forms.Form):
     action = forms.ChoiceField(choices=ACTIONS)
     fk = forms.BooleanField(required=False)
     m2m = forms.BooleanField(required=False)
+    o2o = forms.BooleanField(required=False)
 
     new_field_name = forms.CharField(max_length=255, required=False)
     format_value = forms.CharField(max_length=255, required=False)

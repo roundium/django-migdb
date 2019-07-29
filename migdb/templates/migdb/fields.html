@@ -30,6 +30,9 @@
                 {% if field|check_m2m %}
                 <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />
                 {% endif %}
+                {% if field|check_o2o %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-o2o" value="{{ field|check_o2o }}" />
+                {% endif %}
 
                 ====> action: <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" id="field_{{ field.name }}_actions">
                     <option value="nochange" selected>No Change</option>

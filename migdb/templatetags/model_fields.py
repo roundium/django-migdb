@@ -17,7 +17,14 @@ def check_foriegn_key(field):
 
 
 @register.filter(name="check_m2m")
-def check_many_to_many_field(field):
+def check_many_to_many(field):
     if isinstance(field, ManyToManyField):
+        return True
+    return False
+
+
+@register.filter(name="check_o2o")
+def check_one_2_one(field):
+    if isinstance(field, OneToOneField):
         return True
     return False
