@@ -17,6 +17,8 @@
         <input type="hidden" name="app_name" value="{{ app_name }}"/>
         <input type="hidden" name="model_name" value="{{ model_name }}"/>
         <input type="hidden" name="new_app_name" value="{{ new_app_name }}"/>
+        new model name: <input type="text" name="new_model_name" value="{{ model_name }}">
+        <hr>
         {% for field in fields %}
             <div>
                 name: {{ field.name }}

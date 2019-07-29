@@ -58,12 +58,14 @@ class FieldsList(FormView):
         model_name = request.GET.get("model_name", None)
         new_app_name = request.GET.get("new_app_name", app_name)
 
+        new_model_name = request.POST.get("new_model_name", model_name)
+
         data = {}
         data['app_name'] = app_name
         data['new_app_name'] = new_app_name
         model_structure = {
             'current_name': model_name,
-            'new_name': model_name,
+            'new_name': new_model_name,
             'fields': []
         }
         for form in formset:
@@ -84,6 +86,8 @@ class FieldsList(FormView):
                         if data['models'][index]['current_name'] == model_name:
                             del data['models'][index]
                     data['models'].append(model_structure)
+                    data['app_name'] = app_name
+                    data['new_app_name'] = new_app_name
                 except ValueError:
                     pass
         with open('app_name_structure.json', 'w') as the_file:
