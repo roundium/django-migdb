@@ -41,10 +41,15 @@ class DumpGenerator(Thread):
                     action = field['action']
                     current_field_name = field['current_field_name']
                     m2m_check = field.get('m2m', None)
+                    fk_check = field.get('fk', None)
 
                     if m2m_check:
                         values = getattr(data_item, current_field_name)
                         temp_data['fields'][current_field_name] = [item.id for item in values.all()]
+                        continue
+                    if fk_check:
+                        values = getattr(data_item, current_field_name + "_id")
+                        temp_data['fields'][current_field_name + "_id"] = values
                         continue
                     if action == 'nochange':
                         temp_data['fields'][current_field_name] = getattr(data_item, current_field_name)
@@ -70,6 +75,8 @@ class DumpGenerator(Thread):
                         elif action == 'concat_rename':
                             new_field_name = field.get('new_field_name', current_field_name)
                             temp_data['fields'][new_field_name] = "%s%s%s" % (current_value, concat_delimiter, concat_field_value)
+                    else:
+                        continue
                 dump_data.append(temp_data)
         with open("%s_data.json" % self.app_name, 'w') as file:
             file.write(json.dumps(dump_data, cls=DjangoJSONEncoder))
