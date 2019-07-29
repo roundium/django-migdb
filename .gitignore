@@ -399,3 +399,6 @@ pip-selfcheck.json
 
 # vscode
 .vscode/
+
+# structure files
+*_structure.json
