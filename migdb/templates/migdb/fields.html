@@ -1,0 +1,60 @@
+{% load model_fields static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fields</title>
+</head>
+<body>
+    <form method="POST" action="">
+        <input type="hidden" name="form-TOTAL_FORMS" value="{{ fields|length }}"/>
+        <input type="hidden" name="form-INITIAL_FORMS" value="0"/>
+        <input type="hidden" name="form-MAX_NUM_FORMS" value=""/>
+
+        {% csrf_token %}
+        <input type="hidden" name="app_name" value="{{ app_name }}"/>
+        <input type="hidden" name="model_name" value="{{ model_name }}"/>
+        <input type="hidden" name="new_app_name" value="{{ new_app_name }}"/>
+        new model name: <input type="text" name="new_model_name" value="{{ model_name }}">
+        <hr>
+        {% for field in fields %}
+            <div>
+                name: {{ field.name }}
+                <input type="hidden" name="form-{{ forloop.counter0 }}-current_field_name" value="{{ field.name }}"/>
+
+                {% if field|check_fk %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="fk" />
+                {% endif %}
+                {% if field|check_m2m %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />
+                {% endif %}
+                {% if field|check_o2o %}
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-o2o" value="{{ field|check_o2o }}" />
+                {% endif %}
+
+                ====> action: <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" id="field_{{ field.name }}_actions">
+                    <option value="nochange" selected>No Change</option>
+                    {% for action in actions|slice:"1:" %}
+                    <option value="{{ action.0 }}">{{ action.1 }}</option>
+                    {% endfor %}
+                </select>
+                <div id="field_{{ field.name }}">
+                </div>
+
+            </div><br>
+        {% endfor %}<br>
+        <input type="submit" value="Save" />
+    </form>
+    <script>
+        var fields_list = [
+        {% for field in fields %}
+            "{{ field.name }}",
+        {% endfor %}
+        ];
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'migdb/js/base.js' %}"></script>
+</body>
+</html>
