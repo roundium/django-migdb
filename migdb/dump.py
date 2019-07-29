@@ -39,27 +39,37 @@ class DumpGenerator(Thread):
                 temp_data['fields'] = {}
                 for field in model_item['fields']:
                     action = field['action']
+                    current_field_name = field['current_field_name']
                     m2m_check = field.get('m2m', None)
+
                     if m2m_check:
-                        values = getattr(data_item, field['current_field_name'])
-                        temp_data['fields'][field['current_field_name']] = [item.id for item in values.all()]
+                        values = getattr(data_item, current_field_name)
+                        temp_data['fields'][current_field_name] = [item.id for item in values.all()]
                         continue
                     if action == 'nochange':
-                        temp_data['fields'][field['current_field_name']] = getattr(data_item, field['current_field_name'])
+                        temp_data['fields'][current_field_name] = getattr(data_item, current_field_name)
                     elif action == 'delete':
                         continue
                     elif action == 'rename':
-                        temp_data['fields'][field['new_field_name']] = getattr(data_item, field['current_field_name'])
+                        temp_data['fields'][field['new_field_name']] = getattr(data_item, current_field_name)
                     elif action == 'format':
                         format_value = field['format_value']
-                        current_value = getattr(data_item, field['current_field_name'])
+                        current_value = getattr(data_item, current_field_name)
                         try:
                             final_value = format_value.format(current_value=current_value)
                         except KeyError:
                             final_value = format_value
-                        temp_data['fields'][field['current_field_name']] = final_value
-                    elif action == 'concat':
-                        pass
+                        temp_data['fields'][current_field_name] = final_value
+                    elif action.startswith('concat'):
+                        concat_field = field['concat_field']
+                        concat_field_value = getattr(data_item, concat_field)
+                        concat_delimiter = field.get('concat_delimiter', ' ')
+                        current_value = getattr(data_item, current_field_name)
+                        if action == 'concat':
+                            temp_data['fields'][current_field_name] = "%s%s%s" % (current_value, concat_delimiter, concat_field_value)
+                        elif action == 'concat_rename':
+                            new_field_name = field.get('new_field_name', current_field_name)
+                            temp_data['fields'][new_field_name] = "%s%s%s" % (current_value, concat_delimiter, concat_field_value)
                 dump_data.append(temp_data)
         with open("%s_data.json" % self.app_name, 'w') as file:
             file.write(json.dumps(dump_data, cls=DjangoJSONEncoder))
