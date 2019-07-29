@@ -7,6 +7,8 @@ from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
 
+from django.urls import reverse_lazy
+
 from .dump import DumpGenerator
 from .forms import ACTIONS, FieldForm
 
@@ -114,4 +116,4 @@ class FieldsList(FormView):
         with open(file_name, 'w') as the_file:
             the_file.write(json.dumps(data))
 
-        return redirect("migdb:apps_list")
+        return redirect(reverse_lazy("migdb:models_list") + "?app_name=" + app_name)
