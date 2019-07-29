@@ -61,13 +61,21 @@ class FieldsList(FormView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        formset = self.form(request.POST)
-        if not formset.is_valid():
-            print(formset.errors)
-            return
         app_name = request.GET.get("app_name", None)
         model_name = request.GET.get("model_name", None)
         new_app_name = request.GET.get("new_app_name", app_name)
+
+        formset = self.form(request.POST)
+        if not formset.is_valid():
+            model = apps.get_model(app_label=app_name, model_name=model_name)
+            context = {}
+            context['app_name'] = app_name
+            context['model_name'] = model_name
+            context['new_app_name'] = new_app_name
+            context["fields"] = [field for field in model._meta.get_fields() if not isinstance(field, ManyToOneRel)]
+            context['actions'] = ACTIONS
+            context['message'] = 'Please Fill all fields and then submit the form.'
+            return render(request, self.template_name, context)
 
         new_model_name = request.POST.get("new_model_name", model_name)
 
