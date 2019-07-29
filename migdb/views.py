@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, FormView
-from django.apps import apps
-from django.contrib.auth.models import Permission, User
-from django.forms import formset_factory
 import json
 import os
 
+from django.apps import apps
+from django.forms import formset_factory
+from django.shortcuts import redirect, render
+from django.views.generic import FormView, TemplateView
 
-from .forms import FieldForm, ACTIONS
+from .forms import ACTIONS, FieldForm
+from .dump import DumpGenerator
 
 
 class AppsList(TemplateView):
@@ -18,15 +18,25 @@ class AppsList(TemplateView):
         context["apps"] = apps.get_app_configs()
         return context
 
-class ModelsList(TemplateView):
+class ModelsList(FormView):
     template_name = 'migdb/models.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        app_name = self.request.GET.get("app_name", None)
-        context['app_name'] = app_name
-        context["models"] = apps.all_models[app_name].items()
-        return context
+    def get(self, request, *args, **kwargs):
+        app_name = request.GET.get("app_name", None)
+        return render(request, self.template_name, {
+            "app_name": app_name,
+            'models': apps.all_models[app_name].items(),
+        })
+
+    def post(self, request, *args, **kwargs):
+        app_name = request.GET.get("app_name", None)
+        dump_thread = DumpGenerator(app_name)
+        dump_thread.start()
+        return render(request, self.template_name, {
+            "app_name": app_name,
+            'models': apps.all_models[app_name].items(),
+            "start_dumping": "Dumping is started."
+        })
 
 
 class FieldsList(FormView):

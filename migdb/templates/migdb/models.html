@@ -13,7 +13,11 @@
     <hr>
     {% for name, model in models %}
         <a onclick='submit_url("{{ name }}")' href="#">{{ name }}</a><br>
-    {% endfor %}
+    {% endfor %}<br>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="submit" value="Dump Data">
+    </form>
 
     <script>
             var url = "{% url 'migdb:fields_list' %}?app_name={{ app_name }}";
