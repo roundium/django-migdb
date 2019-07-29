@@ -2,12 +2,13 @@ import json
 import os
 
 from django.apps import apps
+from django.db.models.fields.reverse_related import ManyToOneRel
 from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
 
-from .forms import ACTIONS, FieldForm
 from .dump import DumpGenerator
+from .forms import ACTIONS, FieldForm
 
 
 class AppsList(TemplateView):
@@ -54,7 +55,7 @@ class FieldsList(FormView):
         context['app_name'] = app_name
         context['model_name'] = model_name
         context['new_app_name'] = new_app_name
-        context["fields"] = model._meta.get_fields()
+        context["fields"] = [field for field in model._meta.get_fields() if not isinstance(field, ManyToOneRel)]
         context['actions'] = ACTIONS
 
         return render(request, self.template_name, context)
