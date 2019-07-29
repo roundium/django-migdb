@@ -74,8 +74,10 @@ class FieldsList(FormView):
         data['models'] = []
         data['models'].append(model_structure)
 
-        if os.path.isfile('app_name_structure.json'):
-            with open('app_name_structure.json', 'r') as the_file:
+        file_name = "%s_structure.json" % app_name
+
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as the_file:
                 content = the_file.read()
                 try:
                     content = json.loads(content)
@@ -90,7 +92,7 @@ class FieldsList(FormView):
                     data['new_app_name'] = new_app_name
                 except ValueError:
                     pass
-        with open('app_name_structure.json', 'w') as the_file:
+        with open(file_name, 'w') as the_file:
             the_file.write(json.dumps(data))
 
         return redirect("migdb:apps_list")
