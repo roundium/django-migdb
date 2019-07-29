@@ -67,7 +67,6 @@ class FieldsList(FormView):
             'fields': []
         }
         for form in formset:
-            print(form.cleaned_data)
             field_data = {k: v for k, v in form.cleaned_data.items() if v}
             model_structure['fields'].append(field_data)
         data['models'] = []
@@ -79,6 +78,11 @@ class FieldsList(FormView):
                 try:
                     content = json.loads(content)
                     data = content
+                    if 'models' not in data:
+                        data['models'] = []
+                    for index in range(len(data['models'])):
+                        if data['models'][index]['current_name'] == model_name:
+                            del data['models'][index]
                     data['models'].append(model_structure)
                 except ValueError:
                     pass
