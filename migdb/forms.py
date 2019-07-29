@@ -6,9 +6,10 @@ ACTIONS = (
     ("nochange", "No Change"),
     ("rename", "Rename"),
     ("replace", "Replace"),
-    ("prefix", "Add Prefix"),
-    ("postfix", "Add Postfix"),
     ("format", "Format"),
+    ("delete", "Delete"),
+    ("concat", "Concat"),
+    ("concat_rename", "Concat and rename"),
 )
 
 class FieldForm(forms.Form):
@@ -19,6 +20,6 @@ class FieldForm(forms.Form):
 
     new_field_name = forms.CharField(max_length=255, required=False)
     replace_value = forms.CharField(max_length=255, required=False)
-    prefix_value = forms.CharField(max_length=255, required=False)
-    postfix_value = forms.CharField(max_length=255, required=False)
     format_value = forms.CharField(max_length=255, required=False)
+    concat_field = forms.CharField(max_length=255, required=False)
+    concat_delimiter = forms.CharField(max_length=255, required=False)

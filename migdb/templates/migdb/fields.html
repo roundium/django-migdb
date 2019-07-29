@@ -31,11 +31,9 @@
 
                 ====> action: <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" id="field_{{ field.name }}_actions">
                     <option value="nochange" selected>No Change</option>
-                    <option value="rename">Rename</option>
-                    <option value="replace">Replace</option>
-                    <option value="prefix">Add Prefix</option>
-                    <option value="postfix">Add Postfix</option>
-                    <option value="format">Format</option>
+                    {% for action in actions|slice:"1:" %}
+                    <option value="{{ action.0 }}">{{ action.1 }}</option>
+                    {% endfor %}
                 </select>
                 <div id="field_{{ field.name }}">
                 </div>

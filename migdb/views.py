@@ -7,7 +7,7 @@ import json
 import os
 
 
-from .forms import FieldForm
+from .forms import FieldForm, ACTIONS
 
 
 class AppsList(TemplateView):
@@ -45,6 +45,7 @@ class FieldsList(FormView):
         context['model_name'] = model_name
         context['new_app_name'] = new_app_name
         context["fields"] = model._meta.get_fields()
+        context['actions'] = ACTIONS
 
         return render(request, self.template_name, context)
 
@@ -66,6 +67,7 @@ class FieldsList(FormView):
             'fields': []
         }
         for form in formset:
+            print(form.cleaned_data)
             field_data = {k: v for k, v in form.cleaned_data.items() if v}
             model_structure['fields'].append(field_data)
         data['models'] = []
@@ -74,12 +76,13 @@ class FieldsList(FormView):
         if os.path.isfile('app_name_structure.json'):
             with open('app_name_structure.json', 'r') as the_file:
                 content = the_file.read()
-                content = json.loads(content)
-            content['models'].append(model_structure)
-            with open('app_name_structure.json', 'w') as the_file:
-                the_file.write(json.dumps(content))
-        else:
-            with open('app_name_structure.json', 'w') as the_file:
-                the_file.write(json.dumps(data))
+                try:
+                    content = json.loads(content)
+                    data = content
+                    data['models'].append(model_structure)
+                except ValueError:
+                    pass
+        with open('app_name_structure.json', 'w') as the_file:
+            the_file.write(json.dumps(data))
 
         return redirect("migdb:apps_list")
