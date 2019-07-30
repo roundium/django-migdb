@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 
 from .dump import DumpGenerator
 from .forms import ACTIONS, FieldForm
+from .apps import MigdbConfig
 
 
 class AppsList(TemplateView):
@@ -18,7 +19,9 @@ class AppsList(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["apps"] = apps.get_app_configs()
+        apps_list = list(apps.get_app_configs())
+        apps_list = [item for item in apps_list if not isinstance(item, MigdbConfig)]
+        context['apps'] = apps_list
         return context
 
 class ModelsList(FormView):
