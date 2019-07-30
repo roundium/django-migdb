@@ -25,7 +25,7 @@
                 <input type="hidden" name="form-{{ forloop.counter0 }}-current_field_name" value="{{ field.name }}"/>
 
                 {% if field|check_fk %}
-                <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="fk" />
+                <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="{{ field|check_fk }}" />
                 {% endif %}
                 {% if field|check_m2m %}
                 <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />

@@ -2,7 +2,7 @@ import json
 import os
 
 from django.apps import apps
-from django.db.models.fields.reverse_related import ManyToOneRel
+from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel, OneToOneRel, ForeignObjectRel
 from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 
 from .dump import DumpGenerator
 from .forms import ACTIONS, FieldForm
+from .apps import MigdbConfig
 
 
 class AppsList(TemplateView):
@@ -18,7 +19,9 @@ class AppsList(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["apps"] = apps.get_app_configs()
+        apps_list = list(apps.get_app_configs())
+        apps_list = [item for item in apps_list if not isinstance(item, MigdbConfig)]
+        context['apps'] = apps_list
         return context
 
 class ModelsList(FormView):
@@ -57,7 +60,13 @@ class FieldsList(FormView):
         context['app_name'] = app_name
         context['model_name'] = model_name
         context['new_app_name'] = new_app_name
-        context["fields"] = [field for field in model._meta.get_fields() if not isinstance(field, ManyToOneRel)]
+        ignore_field_types = [
+            ManyToManyRel,
+            ManyToOneRel,
+            OneToOneRel,
+            ForeignObjectRel,
+        ]
+        context["fields"] = [field for field in model._meta.get_fields() if type(field) not in ignore_field_types]
         context['actions'] = ACTIONS
 
         return render(request, self.template_name, context)

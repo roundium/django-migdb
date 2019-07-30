@@ -8,7 +8,7 @@
 </head>
 <body>
     {% for app in apps %}
-        <a href="{% url 'migdb:models_list' %}?app_name={{ app.label }}">{{ app.verbose_name }}</a><br>
+        <a href="{% url 'migdb:models_list' %}?app_name={{ app.label }}">{{ app.label }}</a><br>
     {% endfor %}
 </body>
 </html>
