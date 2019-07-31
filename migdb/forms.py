@@ -6,9 +6,8 @@ ACTIONS = (
     ("nochange", "No Change"),
     ("rename", "Rename"),
     ("format", "Format"),
+    ("format_rename", "Format And Rename"),
     ("delete", "Delete"),
-    ("concat", "Concat"),
-    ("concat_rename", "Concat and rename"),
 )
 
 class FieldForm(forms.Form):
@@ -20,5 +19,3 @@ class FieldForm(forms.Form):
 
     new_field_name = forms.CharField(max_length=255, required=False)
     format_value = forms.CharField(max_length=255, required=False)
-    concat_field = forms.CharField(max_length=255, required=False)
-    concat_delimiter = forms.CharField(max_length=255, required=False)
