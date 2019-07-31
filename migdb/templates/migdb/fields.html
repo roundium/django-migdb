@@ -1,60 +1,158 @@
+{% extends "migdb/base.html" %}
 {% load model_fields static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fields</title>
-</head>
-<body>
-    <form method="POST" action="">
-        <input type="hidden" name="form-TOTAL_FORMS" value="{{ fields|length }}"/>
-        <input type="hidden" name="form-INITIAL_FORMS" value="0"/>
-        <input type="hidden" name="form-MAX_NUM_FORMS" value=""/>
 
-        {% csrf_token %}
-        <input type="hidden" name="app_name" value="{{ app_name }}"/>
-        <input type="hidden" name="model_name" value="{{ model_name }}"/>
-        <input type="hidden" name="new_app_name" value="{{ new_app_name }}"/>
-        new model name: <input type="text" name="new_model_name" value="{{ model_name }}">
-        <hr>
-        {% for field in fields %}
-            <div>
-                name: {{ field.name }}
-                <input type="hidden" name="form-{{ forloop.counter0 }}-current_field_name" value="{{ field.name }}"/>
+{% block title %}
+    MigDB - {{ app_name }}.{{ model_name }} fields
+{% endblock title %}
 
-                {% if field|check_fk %}
-                <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="{{ field|check_fk }}" />
-                {% endif %}
-                {% if field|check_m2m %}
-                <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />
-                {% endif %}
-                {% if field|check_o2o %}
-                <input type="hidden" name ="form-{{ forloop.counter0 }}-o2o" value="{{ field|check_o2o }}" />
-                {% endif %}
+{% block navbar %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg scrolling-navbar double-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'migdb:apps_list' %}">
+                    <img class="logo" src="{% static 'migdb/img/migdb_logo.svg' %}" alt="migDB">
+                </a>
+            </li>
+            <li class="breadcrumb-item black-text active">
+                <a href="{% url 'migdb:models_list' %}?app_name={{ app_name }}">
+                    <i class="fas fa-angle-right mr-2" aria-hidden="true"></i>{{ app_name }}
+                </a>
+            </li>
+            <li class="breadcrumb-item black-text active">
+                <a href="{% url 'migdb:fields_list' %}?app_name={{ app_name }}&model_name={{ model_name }}&new_app_name={{ new_app_name }}">
+                    <i class="fas fa-angle-right mr-2" aria-hidden="true"></i>{{ model_name }}
+                </a>
+            </li>
+        </ol>
+    </nav>
+    <!-- Navbar -->
+{% endblock navbar %}
 
-                ====> action: <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" id="field_{{ field.name }}_actions">
-                    <option value="nochange" selected>No Change</option>
-                    {% for action in actions|slice:"1:" %}
-                    <option value="{{ action.0 }}">{{ action.1 }}</option>
-                    {% endfor %}
-                </select>
-                <div id="field_{{ field.name }}">
+{% block body_content %}
+ <!-- Main layout -->
+    <main>
+        <div class="container-fluid">
+            <!-- Section: Cascading panels -->
+            <section>
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 mb-lg-0 mb-4">
+                    </div>
                 </div>
+                <!-- Grid row -->
+                <div class="row">
+                    <!-- Grid column -->
+                    <div class="col-lg-12 col-md-12 mb-md-0 mb-4">
+                        <!-- Panel -->
+                        <div class="card">
+                            <div class="card-header white-text primary-color">
+                                Migrate {{ model_name }} Model
+                            </div>
+                            <div class="card-body text-left px-4 mb-3">
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form-TOTAL_FORMS" value="{{ fields|length }}"/>
+                                    <input type="hidden" name="form-INITIAL_FORMS" value="0"/>
+                                    <input type="hidden" name="form-MAX_NUM_FORMS" value=""/>
 
-            </div><br>
-        {% endfor %}<br>
-        <input type="submit" value="Save" />
-    </form>
-    <script>
-        var fields_list = [
-        {% for field in fields %}
-            "{{ field.name }}",
-        {% endfor %}
-        ];
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="{% static 'migdb/js/base.js' %}"></script>
-</body>
-</html>
+                                    <input type="hidden" name="app_name" value="{{ app_name }}"/>
+                                    <input type="hidden" name="model_name" value="{{ model_name }}"/>
+                                    <input type="hidden" name="new_app_name" value="{{ new_app_name }}"/>
+
+                                    <div class="row">
+                                        <div class="col-md-4 px-3">
+                                            <div class="md-form my-0">
+                                                <input type="text" id="model-name" name="new_model_name" value="{{ model_name }}" class="form-control">
+                                                <label for="model-name">New Model Name</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="hr-light">
+                                    <!--Accordion wrapper-->
+                                    <div class="accordion md-accordion" id="accordionEx1" role="tablist"
+                                        aria-multiselectable="true">
+
+                                        {% for field in fields %}
+                                        <input type="hidden" name="form-{{ forloop.counter0 }}-current_field_name" value="{{ field.name }}"/>
+                                        <!-- Accordion card -->
+                                        <div class="card">
+                                            <!-- Card header -->
+                                            <div class="card-header px-0" role="tab" id="headingTwo1">
+                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1"
+                                                    href="#collapseTwo{{ forloop.counter }}" aria-expanded="false"
+                                                    aria-controls="collapseTwo{{ forloop.counter }}">
+                                                    <h6 class="mb-0">
+                                                        {{ field.name }}<i class="fas fa-angle-down rotate-icon"></i>
+                                                    </h6>
+                                                </a>
+                                            </div>
+
+                                            {% if field|check_fk %}
+                                            <input type="hidden" name ="form-{{ forloop.counter0 }}-fk" value="{{ field|check_fk }}" />
+                                            {% endif %}
+                                            {% if field|check_m2m %}
+                                            <input type="hidden" name ="form-{{ forloop.counter0 }}-m2m" value="{{ field|check_m2m }}" />
+                                            {% endif %}
+                                            {% if field|check_o2o %}
+                                            <input type="hidden" name ="form-{{ forloop.counter0 }}-o2o" value="{{ field|check_o2o }}" />
+                                            {% endif %}
+
+                                            <!-- Card body -->
+                                            <div id="collapseTwo{{ forloop.counter }}" class="collapse" role="tabpanel"
+                                                aria-labelledby="headingTwo1" data-parent="#accordionEx1">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="md-form my-0">
+                                                                <select onchange="action_changes(this, 'field_{{ field.name }}', '{{ forloop.counter0 }}');" name="form-{{ forloop.counter0 }}-action" class="mdb-select" editable="true">
+                                                                    <option value="nochange" selected>No Change</option>
+                                                                    {% for action in actions|slice:"1:" %}
+                                                                    <option value="{{ action.0 }}">{{ action.1 }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="field_{{ field.name }}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Accordion card -->
+                                        {% endfor %}
+                                    </div>
+                                    <!-- Accordion wrapper -->
+
+                                    <hr class="hr-light my-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <button type="submit" class="btn btn-primary mx-0">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Panel -->
+                    </div>
+                    <!-- Grid column -->
+                </div>
+                <!-- Grid row -->
+            </section>
+            <!--Section: Cascading panels-->
+        </div>
+    </main>
+    <!-- Main layout -->
+{% endblock body_content %}
+
+{% block js_files %}
+<script>
+    $('.mdb-select').materialSelect();
+</script>
+<script>
+    var fields_list = [
+    {% for field in fields %}
+    "{{ field.name }}",
+    {% endfor %}
+    ];
+</script>
+<script src="{% static 'migdb/js/base.js' %}"></script>
+{% endblock js_files %}
