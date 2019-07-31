@@ -1,34 +1,106 @@
+{% extends "migdb/base.html" %}
 {% load model_fields static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Models</title>
-</head>
-<body>
-    current app name: {{ app_name }}<br>
-    destination app name: <input name="dest_appname" value="{{ app_name }}" onkeyup='update_url(this)' type="text" id="dest_appname" /><br>
-    <hr>
-    {% for name, model in models %}
-        <a onclick='submit_url("{{ name }}")' href="#">{{ name }}</a><br>
-    {% endfor %}<br>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <input type="submit" value="Dump Data">
-    </form>
 
-    <script>
-            var url = "{% url 'migdb:fields_list' %}?app_name={{ app_name }}";
-            var new_app_name = "{{ app_name }}";
-            function update_url(input_value){
-                new_app_name = input_value.value;
-            }
-            function submit_url(model_name){
-                submit_url_string = window.location.protocol + "//" + window.location.host + url + "&model_name=" + model_name + "&new_app_name=" + new_app_name;
-                window.open(submit_url_string, '_parent');
-            }
-    </script>
-</body>
-</html>
+{% block title %}
+    MigDB - {{ app_name }} models
+{% endblock title %}
+
+{% block navbar %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg scrolling-navbar double-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'migdb:apps_list' %}">
+                    <img class="logo" src="{% static 'migdb/img/migdb_logo.svg' %}" alt="migDB">
+                </a>
+            </li>
+            <li class="breadcrumb-item black-text active">
+                <a href="?app_name=auth">
+                    <i class="fas fa-angle-right mr-2" aria-hidden="true"></i>
+                    {{ app_name }}
+                </a>
+            </li>
+        </ol>
+    </nav>
+    <!-- Navbar -->
+{% endblock navbar %}
+
+{% block body_content %}
+    <!-- Main layout -->
+    <main>
+        <div class="container-fluid">
+            <!-- Section: Cascading panels -->
+            <section>
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4"></div>
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
+                        <form action="" method="POST">
+                            <div class="md-form input-group mb-4">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action_type" value="save_new_name"/>
+                                    <input type="text" class="form-control" name="app_name" value="{{ new_app_name }}" placeholder="New App Name. Default is {{ app_name }}" aria-label="New App Name. default is {{ app_name }}"
+                                        aria-describedby="MaterialButton-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-md btn-primary m-0 px-3" type="submit"
+                                            id="MaterialButton-addon2">Save</button>
+                                    </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4"></div>
+                </div>
+
+                <!-- Grid row -->
+                <div class="row">
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-md-0 mb-4">
+                        <!-- Panel -->
+                        <div class="card">
+                            <div class="card-header white-text primary-color">
+                                Choose a Model
+                            </div>
+                            <div class="card-body text-center px-4 mb-3">
+                                <div class="list-group list-panel">
+                                    {% for name, model in models %}
+                                        <a href="{% url 'migdb:fields_list' %}?app_name={{ app_name }}&model_name={{ name }}{% if new_app_name %}&new_app_name={{ new_app_name }}{% endif %}" class="list-group-item d-flex justify-content-between dark-grey-text">{{ name }}
+                                        <i class="fas fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to edit"></i></a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Panel -->
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
+                    </div>
+                    <!-- Grid column -->
+                </div>
+                <!-- Grid row -->
+
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="acton_type" value="dump"/>
+                        <button class="btn btn-primary mx-0 mt-3 float-right" type="submit">
+                        Dump Data
+                        </button>
+                    </form>
+                    </div>
+                </div>
+            </section>
+            <!--Section: Cascading panels-->
+        </div>
+    </main>
+    <!-- Main layout -->
+{% endblock body_content %}

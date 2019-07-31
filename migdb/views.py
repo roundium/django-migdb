@@ -29,19 +29,66 @@ class ModelsList(FormView):
 
     def get(self, request, *args, **kwargs):
         app_name = request.GET.get("app_name", None)
+        file_name = "%s_structure.json" % app_name
+        new_app_name = ""
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as file:
+                try:
+                    file_structure = json.loads(file.read())
+                    new_app_name = file_structure['new_app_name']
+                except ValueError:
+                    pass
         return render(request, self.template_name, {
             "app_name": app_name,
+            "new_app_name": new_app_name,
             'models': apps.all_models[app_name].items(),
         })
 
     def post(self, request, *args, **kwargs):
         app_name = request.GET.get("app_name", None)
-        dump_thread = DumpGenerator(app_name)
-        dump_thread.start()
+        file_name = "%s_structure.json" % app_name
+        action_type = request.POST.get("action_type", None)
+        new_app_name = ""
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as file:
+                try:
+                    file_structure = json.loads(file.read())
+                    new_app_name = file_structure['new_app_name']
+                except ValueError:
+                    pass
+        if not action_type:
+            return render(request, self.template_name, {
+                "app_name": app_name,
+                'models': apps.all_models[app_name].items(),
+                "start_dumping": "Dumping is started.",
+                "new_app_name": new_app_name
+            })
+        if action_type == "save_new_name":
+            new_app_name = request.POST.get('app_name', None)
+            if new_app_name:
+                file_structure = {
+                    "app_name": app_name,
+                    "new_app_name": new_app_name,
+                    "models": []
+                }
+                if os.path.isfile(file_name):
+                    with open(file_name, 'r') as file:
+                        try:
+                            file_structure = json.loads(file.read())
+                            file_structure['new_app_name'] = new_app_name
+                        except ValueError:
+                            pass
+                dumped_data = json.dumps(file_structure)
+                with open(file_name, 'w') as file:
+                    file.write(dumped_data)
+        elif action_type == "dump":
+            dump_thread = DumpGenerator(app_name)
+            dump_thread.start()
         return render(request, self.template_name, {
             "app_name": app_name,
             'models': apps.all_models[app_name].items(),
-            "start_dumping": "Dumping is started."
+            "start_dumping": "Dumping is started.",
+            "new_app_name": new_app_name
         })
 
 
