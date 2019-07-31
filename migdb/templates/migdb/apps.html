@@ -1,14 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Apps</title>
-</head>
-<body>
-    {% for app in apps %}
-        <a href="{% url 'migdb:models_list' %}?app_name={{ app.label }}">{{ app.label }}</a><br>
-    {% endfor %}
-</body>
-</html>
+{% extends "migdb/base.html" %}
+{% load static %}
+
+{% block title %}
+    MigDB Apps List
+{% endblock title %}
+
+{% block navbar %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg scrolling-navbar double-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">
+                <a href="index.html">
+                    <img class="logo" src="{% static 'migdb/img/migdb_logo.svg' %}" alt="migDB">
+                </a>
+            </li>
+        </ol>
+    </nav>
+    <!-- Navbar -->
+{% endblock navbar %}
+
+{% block body_content %}
+     <!-- Main layout -->
+    <main>
+        <div class="container-fluid">
+            <!-- Section: Cascading panels -->
+            <section>
+                <!-- Grid row -->
+                <div class="row">
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-md-0 mb-4">
+                        <!-- Panel -->
+                        <div class="card">
+                            <div class="card-header white-text primary-color">
+                                Choose an App
+                            </div>
+                            <div class="card-body text-center px-4 mb-3">
+                                <div class="list-group list-panel">
+                                    {% for app in apps %}
+                                        <a href="{% url 'migdb:models_list' %}?app_name={{ app.label }}" title="{{ app.name }}" class="list-group-item d-flex justify-content-between dark-grey-text">
+                                            {{ app.label }}
+                                            <i class="fas fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to show models"></i>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Panel -->
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
+
+                    </div>
+                    <!-- Grid column -->
+
+                </div>
+                <!-- Grid row -->
+
+            </section>
+            <!--Section: Cascading panels-->
+        </div>
+
+    </main>
+    <!-- Main layout -->
+{% endblock body_content %}

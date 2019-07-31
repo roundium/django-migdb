@@ -1,0 +1,42 @@
+{% load static %}
+<!-- Footer -->
+<footer class="page-footer pt-0 rgba-stylish-light">
+    <!-- Copyright -->
+    <div class="footer-copyright py-3 text-center">
+        <div class="container-fluid">
+            Developed in <a href="https://www.roundium.com/" target="_blank"> Roundium </a> with
+            <i class="fa fa-heart red-text"></i>
+        </div>
+    </div>
+</footer>
+<!-- Footer -->
+
+<!-- SCRIPTS -->
+<!-- JQuery -->
+<script src="{% static 'migdb/js/roundium.min.js' %}"></script>
+
+<!-- Initializations -->
+<script>
+    // SideNav Initialization
+    $(".button-collapse").sideNav();
+
+    var container = document.querySelector('.custom-scrollbar');
+    var ps = new PerfectScrollbar(container, {
+        wheelSpeed: 2,
+        wheelPropagation: true,
+        minScrollbarLength: 20
+    });
+
+    // Data Picker Initialization
+    $('.datepicker').pickadate();
+
+    // Material Select Initialization
+    $(document).ready(function () {
+        $('.mdb-select').material_select();
+    });
+
+    // Tooltips Initialization
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
