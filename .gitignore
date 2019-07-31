@@ -402,3 +402,6 @@ pip-selfcheck.json
 
 # structure files
 *.json
+
+# DS_store
+.DS_Store
