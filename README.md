@@ -1,6 +1,6 @@
 # Django MigDB
 
-if your model structure have changed and you want to transfer data from old model to new one you can use **MigDB**.
+If your model structure has changed and you want to transfer data from the old model to the new one you can use **MigDB**.
 
 ## Features
 
@@ -11,7 +11,7 @@ if your model structure have changed and you want to transfer data from old mode
 
 Install using `pip`...
 
-    pip install `django-migdb`
+    pip install django-migdb
 
 Add `'migdb'` to your `INSTALLED_APPS` setting.
 
