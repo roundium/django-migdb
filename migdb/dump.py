@@ -28,7 +28,7 @@ def generate_dump_file(file_content, app_name):
         for data_item in all_data:
             temp_data = {}
             temp_data['model'] = "%s.%s" % (file_content['new_app_name'], model_item['new_name'])
-            temp_data['pk'] = data_item.pk
+            pk_value = data_item.pk
             temp_data['fields'] = {}
             for field in model_item['fields']:
                 action = field['action']
@@ -36,6 +36,10 @@ def generate_dump_file(file_content, app_name):
                 m2m_check = field.get('m2m', None)
                 fk_check = field.get('fk', None)
                 o2o_check = field.get('o2o', None)
+                primary_check = field.get('primary_key', False)
+
+                if primary_check:
+                    pk_value = getattr(data_item, current_field_name)
 
                 if m2m_check:
                     values = getattr(data_item, current_field_name)
@@ -76,8 +80,11 @@ def generate_dump_file(file_content, app_name):
                         temp_data['fields'][current_field_name] = final_value
                     elif action == "format_rename":
                         temp_data['fields'][field['new_field_name']] = final_value
+                    if primary_check:
+                        pk_value = final_value
                 else:
                     continue
+            temp_data['pk'] = pk_value
             dump_data.append(temp_data)
         with open("%s_data.json" % app_name, 'w') as file:
             file.write(json.dumps(dump_data, cls=DjangoJSONEncoder))

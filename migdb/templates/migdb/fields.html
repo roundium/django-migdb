@@ -82,7 +82,13 @@
                                                     href="#collapseTwo{{ forloop.counter }}" aria-expanded="false"
                                                     aria-controls="collapseTwo{{ forloop.counter }}">
                                                     <h6 class="mb-0">
-                                                        {{ field.name }}<i class="fas fa-angle-down rotate-icon"></i>
+                                                        {{ field.name }}
+                                                        {% if field.primary_key %}
+                                                            <button type="button" title="this is primary key" class="btn-outline-success btn-sm">Primary Key</button>
+                                                        {% else %}
+                                                            <button id="become_primary_key_btn{{forloop.counter}}" type="button" title="this is primary key" class="become-primary-btn btn-outline-primary btn-sm invisible">This column has become primary key</button>
+                                                        {% endif %}
+                                                        <i class="fas fa-angle-down rotate-icon"></i>
                                                     </h6>
                                                 </a>
                                             </div>
@@ -111,6 +117,25 @@
                                                                     {% endfor %}
                                                                 </select>
                                                             </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            {% if field.primary_key %}
+                                                                <div class="switch">
+                                                                    Primary Key:
+                                                                    <label>
+                                                                        <input checked id="primary_key_checkbox{{forloop.counter}}" class="primary_key_checkbox" onchange="check_checkbox(this, {{forloop.counter}});" checked name="form-{{ forloop.counter0 }}-primary_key" type="checkbox">
+                                                                        <span class="lever"></span>
+                                                                    </label>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="switch">
+                                                                    Primary Key:
+                                                                    <label>
+                                                                        <input id="primary_key_checkbox{{forloop.counter}}" class="primary_key_checkbox" onchange="check_checkbox(this, {{forloop.counter}});" name="form-{{ forloop.counter0 }}-primary_key" type="checkbox">
+                                                                        <span class="lever"></span>
+                                                                    </label>
+                                                                </div>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                     <div id="field_{{ field.name }}"></div>

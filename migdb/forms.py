@@ -19,3 +19,4 @@ class FieldForm(forms.Form):
 
     new_field_name = forms.CharField(max_length=255, required=False)
     format_value = forms.CharField(max_length=255, required=False)
+    primary_key = forms.BooleanField(required=False)

@@ -56,3 +56,15 @@ function action_changes(obj, div_id, forloop_coun){
         $("#" + div_id).html('')
     }
 }
+
+function check_checkbox(checkbox_input, forloop_counter){
+    if(checkbox_input.checked == true){
+        $(".primary_key_checkbox").not(checkbox_input).prop('checked', false);
+        $("#" + checkbox_input.id).prop('checked', true);
+
+        $('.become-primary-btn').addClass('invisible');
+        $('#become_primary_key_btn' + forloop_counter).removeClass('invisible');
+    }else{
+        $('.become-primary-btn').addClass('invisible');
+    }
+}

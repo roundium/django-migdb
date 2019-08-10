@@ -161,7 +161,7 @@ class FieldsList(FormView):
                     data = content
                     if 'models' not in data:
                         data['models'] = []
-                    for index in range(0, len(data['models'])-1):
+                    for index in range(0, len(data['models'])):
                         if data['models'][index]['current_name'] == model_name:
                             del data['models'][index]
                     data['models'].append(model_structure)
