@@ -31,7 +31,7 @@ That's it, we're done!
 
     ./manage.py runserver
 
-You can now open the MigDB Interface in your browser at `http://127.0.0.1:8000/migdb/apps`, and view your apps.
+You can now open the MigDB Interface in your browser at `http://127.0.0.1:8000/migdb/`, and view your apps.
 
 ## Options
 
