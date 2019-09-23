@@ -7,6 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 
 def get_structure_file_content(file_name):
+    """
+    chech the structure file exists or not
+    """
     if os.path.isfile(file_name):
         with open(file_name, "r") as file:
             content = file.read()
@@ -38,9 +41,11 @@ def generate_dump_file(file_content, app_name):
                 o2o_check = field.get('o2o', None)
                 primary_check = field.get('primary_key', False)
 
+                # replace pk value if the primary key has changed
                 if primary_check:
                     pk_value = getattr(data_item, current_field_name)
 
+                # get the many 2 many value if the field is many 2 many
                 if m2m_check:
                     values = getattr(data_item, current_field_name)
                     if action == 'nochange':
@@ -48,6 +53,10 @@ def generate_dump_file(file_content, app_name):
                     elif action == 'rename':
                         temp_data['fields'][field['new_field_name']] = [item.id for item in values.all()]
                     continue
+
+                # get the foriegn key or one 2 one field value. we append the _id to the field name
+                # because the foriegn key and one 2 one field has the _id at the end in django.
+                # remember one 2 one field is the foriegn key that have primary=True attribute
                 if fk_check or o2o_check:
                     values = getattr(data_item, current_field_name + "_id")
                     if action == 'nochange':
@@ -63,12 +72,18 @@ def generate_dump_file(file_content, app_name):
                             final_value = format_value
                         temp_data['fields'][current_field_name] = final_value
                     continue
+
+                # field has no changes
                 if action == 'nochange':
                     temp_data['fields'][current_field_name] = getattr(data_item, current_field_name)
+                # if the field has the delete flag we will ignore the field
                 elif action == 'delete':
                     continue
+                # handle the rename case. only rename not the format_rename
                 elif action == 'rename':
-                    temp_data['fields'][field['new_field_name']] = getattr(data_item, current_field_name)
+                    field_new_name = field['new_field_name']
+                    temp_data['fields'][field_new_name] = getattr(data_item, current_field_name)
+                # handle all format cases. format and format_rename
                 elif action.startswith('format'):
                     format_value = field['format_value']
                     current_value = getattr(data_item, current_field_name)
@@ -79,7 +94,9 @@ def generate_dump_file(file_content, app_name):
                     if action == "format":
                         temp_data['fields'][current_field_name] = final_value
                     elif action == "format_rename":
-                        temp_data['fields'][field['new_field_name']] = final_value
+                        field_new_name = field['new_field_name']
+                        temp_data['fields'][field_new_name] = final_value
+                    # if the field has formated and have the primary flag we have to replace the primary value with it.
                     if primary_check:
                         pk_value = final_value
                 else:

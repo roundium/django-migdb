@@ -107,6 +107,7 @@ class FieldsList(FormView):
         context['app_name'] = app_name
         context['model_name'] = model_name
         context['new_app_name'] = new_app_name
+        # ignore the Rel fields because thay are not actual fields.
         ignore_field_types = [
             ManyToManyRel,
             ManyToOneRel,
