@@ -1,0 +1,43 @@
+{
+  "name": "django-migdb",
+  "version": "1.0.0",
+  "description": "migdb is tool for transfer data from old model to new django model",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js --progress --colors --mode development",
+    "watch": "webpack --config webpack.config.js --watch --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roundium/django-migdb.git"
+  },
+  "keywords": [
+    "migdb",
+    "migration",
+    "database",
+    "django",
+    "python",
+    "data",
+    "model"
+  ],
+  "author": "cnili info@cnili.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/roundium/django-migdb/issues"
+  },
+  "homepage": "https://github.com/roundium/django-migdb#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^4.41.0",
+    "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^3.3.9"
+  },
+  "dependencies": {
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}

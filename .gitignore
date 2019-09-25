@@ -400,8 +400,5 @@ pip-selfcheck.json
 # vscode
 .vscode/
 
-# structure files
-*.json
-
 # DS_store
 .DS_Store

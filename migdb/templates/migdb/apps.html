@@ -1,72 +1,21 @@
-{% extends "migdb/base.html" %}
 {% load static %}
-
-{% block title %}
-    MigDB Apps List
-{% endblock title %}
-
-{% block navbar %}
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg scrolling-navbar double-nav">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active">
-                <a href="{% url 'migdb:apps_list' %}">
-                    <img class="logo" src="{% static 'migdb/img/migdb_logo.svg' %}" alt="migDB">
-                </a>
-            </li>
-        </ol>
-    </nav>
-    <!-- Navbar -->
-{% endblock navbar %}
-
-{% block body_content %}
-     <!-- Main layout -->
-    <main>
-        <div class="container-fluid">
-            <!-- Section: Cascading panels -->
-            <section>
-                <!-- Grid row -->
-                <div class="row">
-                    <!-- Grid column -->
-                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
-                    </div>
-                    <!-- Grid column -->
-
-                    <!-- Grid column -->
-                    <div class="col-lg-4 col-md-12 mb-md-0 mb-4">
-                        <!-- Panel -->
-                        <div class="card">
-                            <div class="card-header white-text primary-color">
-                                Choose an App
-                            </div>
-                            <div class="card-body text-center px-4 mb-3">
-                                <div class="list-group list-panel">
-                                    {% for app in apps %}
-                                        <a href="{% url 'migdb:models_list' %}?app_name={{ app.label }}" title="{{ app.name }}" class="list-group-item d-flex justify-content-between dark-grey-text">
-                                            {{ app.label }}
-                                            <i class="fas fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to show models"></i>
-                                        </a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Panel -->
-                    </div>
-                    <!-- Grid column -->
-
-                    <!-- Grid column -->
-                    <div class="col-lg-4 col-md-12 mb-lg-0 mb-4">
-
-                    </div>
-                    <!-- Grid column -->
-
-                </div>
-                <!-- Grid row -->
-
-            </section>
-            <!--Section: Cascading panels-->
-        </div>
-
-    </main>
-    <!-- Main layout -->
-{% endblock body_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Migdb - Apps</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'migdb/img/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'migdb/img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'migdb/img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'migdb/img/favicon/site.webmanifest' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link rel="stylesheet" href="{% static 'migdb/css/roundium.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="react"></div>
+    <script src="{% static 'migdb/js/main.js' %}"></script>
+</body>
+</html>
