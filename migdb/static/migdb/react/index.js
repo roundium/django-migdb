@@ -1,13 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import ItemList from "./components/ItemList";
 
-
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
+class App extends React.Component {
+  render(){
+    return (
+      <div>
+        <Header />
+        <ItemList itemType="apps" />
+        <Footer />
+      </div>
+    )
+  }
 }
 
-const element = <Welcome name="World" />;
 ReactDOM.render(
-  element,
+  <App />,
   document.getElementById('react')
 );

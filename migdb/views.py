@@ -6,6 +6,7 @@ from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel,
 from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.generic import FormView, TemplateView
+from django.http import JsonResponse
 
 from django.urls import reverse_lazy
 
@@ -14,15 +15,21 @@ from .forms import ACTIONS, FieldForm
 from .apps import MigdbConfig
 
 
-class AppsList(TemplateView):
+class Home(TemplateView):
     template_name = 'migdb/apps.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        apps_list = list(apps.get_app_configs())
-        apps_list = [item for item in apps_list if not isinstance(item, MigdbConfig)]
-        context['apps'] = apps_list
-        return context
+def apps_list(request):
+    apps_list = list(apps.get_app_configs())
+    apps_list = [item for item in apps_list if not isinstance(item, MigdbConfig)]
+    data = []
+    for app in apps_list:
+        data.append(
+            {
+                "name": app.name,
+                "label": app.label,
+            }
+        )
+    return JsonResponse({"apps": data})
 
 class ModelsList(FormView):
     template_name = 'migdb/models.html'
