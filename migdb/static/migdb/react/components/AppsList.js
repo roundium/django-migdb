@@ -2,13 +2,11 @@ import React from "react";
 import Item from "./Item";
 
 
-export default class ItemList extends React.Component {
+export default class AppsList extends React.Component {
   constructor(props){
     super();
     this.state = {
       items: [],
-      itemTypes: props.itemType,
-      error: false,
     }
   }
   componentDidMount(){
@@ -18,7 +16,7 @@ export default class ItemList extends React.Component {
     .catch((err) => console.log(err))
   }
   render() {
-    let apps = this.state.items.map((app, i) => <Item item={app} key={i} />);
+    let apps = this.state.items.map((app, i) => <Item itemType="app" item={app} key={i} />);
     return (
       <main>
         <div className="container-fluid">

@@ -35,7 +35,7 @@ class ModelsList(FormView):
     template_name = 'migdb/models.html'
 
     def get(self, request, *args, **kwargs):
-        app_name = request.GET.get("app_name", None)
+        app_name = kwargs.get("app_name", None)
         file_name = "%s_structure.json" % app_name
         new_app_name = ""
         if os.path.isfile(file_name):
@@ -45,11 +45,14 @@ class ModelsList(FormView):
                     new_app_name = file_structure['new_app_name']
                 except ValueError:
                     pass
-        return render(request, self.template_name, {
+        data = {
             "app_name": app_name,
             "new_app_name": new_app_name,
-            'models': apps.all_models[app_name].items(),
-        })
+            'models': [],
+        }
+        for name, model in apps.all_models[app_name].items():
+            data['models'].append(name)
+        return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
         app_name = request.GET.get("app_name", None)
