@@ -15,8 +15,18 @@ from .forms import ACTIONS, FieldForm
 from .apps import MigdbConfig
 
 
-class Home(TemplateView):
+class Home(FormView):
     template_name = 'migdb/apps.html'
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            "apps": reverse_lazy("migdb:apps_list"),
+            "models": reverse_lazy("migdb:models_list"),
+            "fields": reverse_lazy("migdb:fields_list"),
+        }
+        return JsonResponse({"urls": data})
 
 def apps_list(request):
     apps_list = list(apps.get_app_configs())

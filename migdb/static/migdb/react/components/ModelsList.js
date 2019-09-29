@@ -23,7 +23,7 @@ export default class ModelsList extends React.Component {
       .catch(err => console.log(err));
   }
   render() {
-    let models = this.state.models.map((model, i) => <Item itemType="model" item={model} key={i} />);
+    let models = this.state.models.map((model, i) => <Item itemType="model" app_name={this.state.app_name} item={model} key={i} />);
     return (
       <main>
         <div className="container-fluid">
