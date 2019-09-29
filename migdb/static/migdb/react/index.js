@@ -13,9 +13,9 @@ class App extends React.Component {
       <Router>
         <div>
           <Header />
-          <Route exact path="/migdb" component={AppsList} />
-          <Route exact path="/migdb/:app_name/models" component={ModelsList} />
-          <Route exact path="/migdb/:app_name/:model_name/fields" component={FieldsList} />
+          <Route exact path="/migdb/" component={AppsList} />
+          <Route exact path="/migdb/:app_name/models/" component={ModelsList} />
+          <Route exact path="/migdb/:app_name/:model_name/fields/" component={FieldsList} />
           <Footer />
         </div>
       </Router>

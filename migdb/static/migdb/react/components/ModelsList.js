@@ -11,7 +11,7 @@ export default class ModelsList extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("models/" + this.props.match.params.app_name)
+    fetch("")
       .then(res => res.json())
       .then(data => {
         this.setState({
