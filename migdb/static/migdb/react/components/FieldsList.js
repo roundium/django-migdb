@@ -3,9 +3,11 @@ import Field from "./Field";
 
 export default class FieldsList extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
-      fields: []
+      fields: [],
+      model_name: "",
+      app_name: ""
     };
   }
   componentDidMount() {
@@ -19,6 +21,10 @@ export default class FieldsList extends React.Component {
         });
       })
       .catch(err => console.log(err));
+  }
+  dump_data_btn(e){
+    e.preventDefault();
+    console.log(this.state);
   }
   render() {
     let fields = this.state.fields.map((field, i) => <Field field={field} key={i} />);
@@ -62,8 +68,8 @@ export default class FieldsList extends React.Component {
                       <hr className="hr-light my-3" />
                       <div className="row">
                         <div className="col-md-4">
-                          <button type="submit" className="btn btn-primary mx-0">
-                            Save
+                          <button onClick={e => this.dump_data_btn(e)} className="btn btn-primary mx-0">
+                            Dump Data
                           </button>
                         </div>
                       </div>
