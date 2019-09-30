@@ -1,5 +1,6 @@
 import React from "react";
 import Field from "./Field";
+import Accordion from "react-bootstrap/Accordion";
 
 export default class FieldsList extends React.Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class FieldsList extends React.Component {
     console.log(this.state);
   }
   render() {
-    let fields = this.state.fields.map((field, i) => <Field field={field} key={i} />);
+    let fields = this.state.fields.map((field, i) => <Field field={field} id={i} key={i} />);
     return (
       <main>
         <div className="container-fluid">
@@ -63,7 +64,9 @@ export default class FieldsList extends React.Component {
                         role="tablist"
                         aria-multiselectable="true"
                       >
-                        {fields}
+                        <Accordion>
+                          {fields}
+                        </Accordion>
                       </div>
                       <hr className="hr-light my-3" />
                       <div className="row">

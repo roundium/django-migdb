@@ -1,49 +1,25 @@
 import React from "react";
+import Accordion from "react-bootstrap/Accordion";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 
 export default class Field extends React.Component {
   render() {
     let { field } = this.props;
     return (
-      <div className="card">
-        <div className="card-header px-0" role="tab" id="headingTwo1">
-          <a
-            className="collapsed"
-            data-toggle="collapse"
-            data-parent="#accordionEx1"
-            href="#collapseTwo"
-            aria-expanded="false"
-            aria-controls="collapseTwo"
-          >
-            <h6 className="mb-0">
-              {field.name}
-              <i className="fas fa-angle-down rotate-icon"></i>
-            </h6>
-          </a>
-        </div>
-        <div
-          id="collapseTwo"
-          className="collapse"
-          role="tabpanel"
-          aria-labelledby="headingTwo1"
-          data-parent="#accordionEx1"
-        >
-          <div className="card-body">
-            <div className="row">
-              <div className="col-md-4">
-                <div className="md-form my-0">
-                  <select
-                    name="form-action"
-                    className="mdb-select"
-                    editable="true"
-                    defaultValue="nochange"
-                  >
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <Card>
+          <Card.Header role="tab" id="headingTwo1">
+            <Accordion.Toggle as={Button} variant="link" eventKey={this.props.id}>
+             <h6 className="mb-0">
+                {field.name}
+                <i className="fas fa-angle-down rotate-icon"></i>
+              </h6>
+            </Accordion.Toggle>
+          </Card.Header>
+          <Accordion.Collapse eventKey={this.props.id}>
+            <Card.Body>{field.name}</Card.Body>
+          </Accordion.Collapse>
+        </Card>
     );
   }
 }
