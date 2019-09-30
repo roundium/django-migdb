@@ -13,6 +13,7 @@ from django.urls import reverse_lazy
 from .dump import DumpGenerator
 from .forms import ACTIONS, FieldForm
 from .apps import MigdbConfig
+from .templatetags.model_fields import check_foriegn_key,check_many_to_many, check_one_2_one
 
 
 class Home(FormView):
@@ -112,21 +113,28 @@ class ModelsList(FormView):
         })
 
 
+def generate_field_json_res(field):
+    return {
+        "name": field.name,
+        "pk": field.primary_key,
+        "fk": check_foriegn_key(field),
+        "m2m": check_many_to_many(field),
+        "o2o": check_one_2_one(field)
+    }
+
+
 class FieldsList(FormView):
     template_name = 'migdb/fields.html'
     form = formset_factory(FieldForm)
 
     def get(self, request, *args, **kwargs):
-        app_name = request.GET.get("app_name", None)
-        model_name = request.GET.get("model_name", None)
-        new_app_name = request.GET.get("new_app_name", app_name)
+        app_name = kwargs.get("app_name", None)
+        model_name = kwargs.get("model_name", None)
+        if app_name is None or model_name is None:
+            return JsonResponse({"data": {"error": "send both app and model name"}})
 
         model = apps.get_model(app_label=app_name, model_name=model_name)
 
-        context = {}
-        context['app_name'] = app_name
-        context['model_name'] = model_name
-        context['new_app_name'] = new_app_name
         # ignore the Rel fields because thay are not actual fields.
         ignore_field_types = [
             ManyToManyRel,
@@ -134,10 +142,14 @@ class FieldsList(FormView):
             OneToOneRel,
             ForeignObjectRel,
         ]
-        context["fields"] = [field for field in model._meta.get_fields() if type(field) not in ignore_field_types]
-        context['actions'] = ACTIONS
+        fields = []
+        data = {
+            "fields": [generate_field_json_res(field) for field in model._meta.get_fields() if type(field) not in ignore_field_types],
+            "app_name": app_name,
+            "model_name": model_name
+        }
 
-        return render(request, self.template_name, context)
+        return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
         app_name = request.GET.get("app_name", None)
