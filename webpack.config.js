@@ -5,16 +5,12 @@ var BundleTracker = require('webpack-bundle-tracker');
 module.exports = {
   context: __dirname,
 
-  entry: './migdb/static/migdb/react/index',
+  entry: './frontend/index',
 
   output: {
       path: path.resolve('./migdb/static/migdb/js/'),
       filename: "[name].js",
   },
-
-  // plugins: [
-  //   new BundleTracker({filename: './migdb/webpack-stats.json'}),
-  // ],
   module: {
     rules: [
       {
