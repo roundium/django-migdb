@@ -2,20 +2,24 @@ import json
 import os
 
 from django.apps import apps
-from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel, OneToOneRel, ForeignObjectRel
+from django.db.models.fields.reverse_related import (ForeignObjectRel,
+                                                     ManyToManyRel,
+                                                     ManyToOneRel, OneToOneRel)
 from django.forms import formset_factory
-from django.shortcuts import redirect, render
-from django.views.generic import FormView, TemplateView
 from django.http import JsonResponse
-
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views.generic import FormView, TemplateView
 
+from .apps import MigdbConfig
 from .dump import DumpGenerator
 from .forms import ACTIONS, FieldForm
-from .apps import MigdbConfig
-from .templatetags.model_fields import check_foriegn_key,check_many_to_many, check_one_2_one
+from .templatetags.model_fields import (check_foriegn_key, check_many_to_many,
+                                        check_one_2_one)
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class Home(FormView):
     template_name = 'migdb/apps.html'
     def get(self, request, *args, **kwargs):
@@ -23,9 +27,7 @@ class Home(FormView):
 
     def post(self, request, *args, **kwargs):
         data = {
-            "apps": reverse_lazy("migdb:apps_list"),
-            "models": reverse_lazy("migdb:models_list"),
-            "fields": reverse_lazy("migdb:fields_list"),
+            "base_url": reverse_lazy("migdb:home"),
         }
         return JsonResponse({"urls": data})
 

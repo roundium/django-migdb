@@ -8,14 +8,33 @@ import FieldsList from "./components/FieldsList";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      base_url: "/migdb/",
+    };
+  }
+  componentDidMount() {
+    fetch("", { method: "POST" })
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          base_url: res.base_url,
+        });
+      });
+  }
   render() {
+    let base_url = this.state.base_url;
+    let models_url = base_url + ":app_name/models/";
+    let fields_url = base_url + ":app_name/:model_name/fields/";
+
     return (
       <Router>
         <div>
           <Header />
-          <Route exact path="/migdb/" component={AppsList} />
-          <Route exact path="/migdb/:app_name/models/" component={ModelsList} />
-          <Route exact path="/migdb/:app_name/:model_name/fields/" component={FieldsList} />
+          <Route exact path={base_url} component={AppsList} />
+          <Route exact path={models_url} component={ModelsList} />
+          <Route exact path={fields_url} component={FieldsList} />
           <Footer />
         </div>
       </Router>
