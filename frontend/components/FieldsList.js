@@ -8,7 +8,7 @@ export default class FieldsList extends React.Component {
     this.state = {
       fields: [],
       model_name: "",
-      app_name: ""
+      app_name: "",
     };
   }
   componentDidMount() {
@@ -18,17 +18,19 @@ export default class FieldsList extends React.Component {
         this.setState({
           fields: data.fields,
           model_name: data.model_name,
-          app_name: data.app_name
+          app_name: data.app_name,
         });
       })
       .catch(err => console.log(err));
   }
-  dump_data_btn(e){
+  dump_data_btn(e) {
     e.preventDefault();
     console.log(this.state);
   }
   render() {
-    let fields = this.state.fields.map((field, i) => <Field field={field} id={i} key={i} />);
+    let fields = this.state.fields.map((field, i) => (
+      <Field field={field} id={i} key={i} />
+    ));
     return (
       <main>
         <div className="container-fluid">
@@ -64,14 +66,15 @@ export default class FieldsList extends React.Component {
                         role="tablist"
                         aria-multiselectable="true"
                       >
-                        <Accordion>
-                          {fields}
-                        </Accordion>
+                        <Accordion>{fields}</Accordion>
                       </div>
                       <hr className="hr-light my-3" />
                       <div className="row">
                         <div className="col-md-4">
-                          <button onClick={e => this.dump_data_btn(e)} className="btn btn-primary mx-0">
+                          <button
+                            onClick={e => this.dump_data_btn(e)}
+                            className="btn btn-primary mx-0"
+                          >
                             Dump Data
                           </button>
                         </div>

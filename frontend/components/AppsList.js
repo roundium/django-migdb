@@ -1,22 +1,25 @@
 import React from "react";
 import Item from "./Item";
 
-
 export default class AppsList extends React.Component {
-  constructor(props){
+  constructor(props) {
     super();
     this.state = {
       items: [],
-    }
+    };
   }
-  componentDidMount(){
+  componentDidMount() {
     fetch("apps")
-    .then(res => res.json())
-    .then((data) => {this.setState({items: data.apps, error: false})})
-    .catch((err) => console.log(err))
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ items: data.apps, error: false });
+      })
+      .catch(err => console.log(err));
   }
   render() {
-    let apps = this.state.items.map((app, i) => <Item itemType="app" item={app} key={i} />);
+    let apps = this.state.items.map((app, i) => (
+      <Item itemType="app" item={app} key={i} />
+    ));
     return (
       <main>
         <div className="container-fluid">
@@ -29,9 +32,7 @@ export default class AppsList extends React.Component {
                     Choose an App
                   </div>
                   <div className="card-body text-center px-4 mb-3">
-                    <div className="list-group list-panel">
-                        { apps }
-                    </div>
+                    <div className="list-group list-panel">{apps}</div>
                   </div>
                 </div>
               </div>

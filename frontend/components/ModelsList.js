@@ -3,11 +3,11 @@ import Item from "./Item";
 
 export default class ModelsList extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       models: [],
       app_name: "",
-      new_app_name: ""
+      new_app_name: "",
     };
   }
   componentDidMount() {
@@ -17,13 +17,20 @@ export default class ModelsList extends React.Component {
         this.setState({
           models: data.models,
           app_name: data.app_name,
-          new_app_name: data.new_app_name
+          new_app_name: data.new_app_name,
         });
       })
       .catch(err => console.log(err));
   }
   render() {
-    let models = this.state.models.map((model, i) => <Item itemType="model" app_name={this.state.app_name} item={model} key={i} />);
+    let models = this.state.models.map((model, i) => (
+      <Item
+        itemType="model"
+        app_name={this.state.app_name}
+        item={model}
+        key={i}
+      />
+    ));
     return (
       <main>
         <div className="container-fluid">
