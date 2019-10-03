@@ -10,7 +10,10 @@ export default class FieldsList extends React.Component {
       model_name: "",
       app_name: "",
     };
+    this.save_new_model_name = this.save_new_model_name.bind(this);
+    this.dump_data_btn = this.dump_data_btn.bind(this);
   }
+
   componentDidMount() {
     fetch("")
       .then(res => res.json())
@@ -23,10 +26,18 @@ export default class FieldsList extends React.Component {
       })
       .catch(err => console.log(err));
   }
+
   dump_data_btn(e) {
     e.preventDefault();
-    console.log(this.state);
+    // TODO: read the state and send it to server to dump data.
   }
+
+  save_new_model_name(e) {
+    this.setState({
+      new_model_name: e.target.value,
+    });
+  }
+
   render() {
     let fields = this.state.fields.map((field, i) => (
       <Field field={field} id={i} key={i} />
@@ -54,8 +65,10 @@ export default class FieldsList extends React.Component {
                               id="model-name"
                               name="new_model_name"
                               className="form-control"
+                              placeholder="New Model Name"
+                              defaultValue={this.state.model_name}
+                              onChange={this.save_new_model_name}
                             />
-                            <label htmlFor="model-name">New Model Name</label>
                           </div>
                         </div>
                       </div>
@@ -72,7 +85,7 @@ export default class FieldsList extends React.Component {
                       <div className="row">
                         <div className="col-md-4">
                           <button
-                            onClick={e => this.dump_data_btn(e)}
+                            onClick={this.dump_data_btn}
                             className="btn btn-primary mx-0"
                           >
                             Dump Data
