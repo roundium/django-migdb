@@ -6,11 +6,11 @@ export default class Item extends React.Component {
     let item = this.props.item;
     let itemUrl, itemName, itemLabel;
     if (this.props.itemType == "app") {
-      itemUrl = "/migdb/" + item.label + "/models/";
+      itemUrl = `/${item.label}/models/`;
       itemName = item.name;
       itemLabel = item.label;
     } else {
-      itemUrl = "/migdb/" + this.props.app_name + "/" + item + "/fields/";
+      itemUrl = `/${this.props.app_name}/${item}/fields/`;
       itemName = item;
       itemLabel = item;
     }

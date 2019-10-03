@@ -8,7 +8,7 @@ export default class Header extends React.Component {
         <nav className="navbar navbar-expand-lg scrolling-navbar double-nav">
           <ol className="breadcrumb">
             <li className="breadcrumb-item active">
-              <Link title="MigDB" to="/migdb/">
+              <Link title="MigDB" to="/">
                 <img
                   className="logo"
                   src="/static/migdb/img/migdb_logo.svg"
