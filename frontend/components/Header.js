@@ -1,24 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { PageHeader } from "antd";
 
 export default class Header extends React.Component {
   render() {
+    const routes = [
+      {
+        path: "/",
+        breadcrumbName: "Home",
+      },
+    ];
     return (
-      <header>
-        <nav className="navbar navbar-expand-lg scrolling-navbar double-nav">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item active">
-              <Link title="MigDB" to="/">
-                <img
-                  className="logo"
-                  src="/static/migdb/img/migdb_logo.svg"
-                  alt="migDB"
-                />
-              </Link>
-            </li>
-          </ol>
-        </nav>
-      </header>
+      <PageHeader title="MigDB" breadcrumb={{ routes }} subTitle="MigDB" />
     );
   }
 }
