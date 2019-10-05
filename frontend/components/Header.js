@@ -1,14 +1,12 @@
 import React from "react";
-import { PageHeader } from "antd";
+import { Avatar } from "antd";
 
 const Header = () => {
-  const routes = [
-    {
-      path: "/",
-      breadcrumbName: "Home",
-    },
-  ];
-  return <PageHeader title="MigDB" breadcrumb={{ routes }} subTitle="MigDB" />;
+  return (
+    <div>
+      <Avatar className="" size="large" alt="Migdb" title="Migdb" shape="circle" src="/static/migdb/img/migdb_logo.svg" />
+    </div>
+  );
 };
 
 export default Header;

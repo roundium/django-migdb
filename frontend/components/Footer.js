@@ -10,7 +10,7 @@ const Footer = () => {
             {" "}
             Roundium{" "}
           </a>{" "}
-          with
+          with{" "}
           <i className="fa fa-heart red-text"></i>
         </div>
       </div>
