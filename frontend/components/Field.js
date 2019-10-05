@@ -1,9 +1,9 @@
 import React from "react";
-import { Collapse } from 'antd';
+import { Collapse } from "antd";
 
 const { Panel } = Collapse;
 
-const Field = ({field, id}) => {
+const Field = ({ field, id }) => {
   return (
     <Panel header={field.name} key={id}>
       <p>{field.name}</p>

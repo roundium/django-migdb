@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Item = ({app_name, item, itemType}) => {
+const Item = ({ app_name, item, itemType }) => {
   let itemUrl, itemName, itemLabel;
   if (itemType == "app") {
     itemUrl = `/${item.label}/models/`;
