@@ -8,14 +8,31 @@ module.exports = {
   entry: "./frontend/index",
 
   output: {
-    path: path.resolve("./migdb/static/migdb/js/"),
+    path: path.resolve(__dirname, "migdb/static/migdb/js/"),
     filename: "[name].js",
   },
+  resolve: {
+    extensions: ["*", ".js", ".jsx"],
+  },
+
+  watch: true,
+  devServer: {
+    inline: true,
+    contentBase: path.join(__dirname, './frontend'),
+    port: 9000
+  },
+
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve(__dirname, "/node_modules"),
+          path.resolve(__dirname, "/migdb"),
+        ],
+        include:[
+          path.resolve(__dirname, 'frontend/'),
+        ],
         use: ["babel-loader"],
       },
       {
@@ -23,8 +40,5 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
     ],
-  },
-  resolve: {
-    extensions: ["*", ".js", ".jsx"],
   },
 };

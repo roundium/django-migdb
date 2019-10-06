@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --progress --colors --mode production",
-    "watch": "webpack --config webpack.config.js --watch --mode development"
+    "watch": "webpack --config webpack.config.js --watch --mode development",
+    "serve": "./node_modules/.bin/webpack-dev-server --hot"
   },
   "repository": {
     "type": "git",
@@ -40,7 +41,8 @@
     "style-loader": "^1.0.0",
     "webpack": "^4.41.0",
     "webpack-bundle-tracker": "^0.4.3",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
     "antd": "^3.23.5",
