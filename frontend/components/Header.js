@@ -1,11 +1,18 @@
 import React from "react";
 import { Avatar } from "antd";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <div>
-      <Avatar className="" size="large" alt="Migdb" title="Migdb" shape="circle" src="/static/migdb/img/migdb_logo.svg" />
-    </div>
+    <Link to="/">
+      <Avatar
+        size="large"
+        alt="Migdb"
+        title="Migdb"
+        shape="circle"
+        src="/static/migdb/img/migdb_logo.svg"
+      />
+    </Link>
   );
 };
 
