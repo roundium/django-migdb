@@ -18,8 +18,8 @@ const App = () => {
   const base_url = window.location.pathname;
   return (
     <Router basename={base_url}>
-      <Layout hasSider={false}>
-        <Header style={{backgroundColor: "#f0f2f5"}}>
+      <Layout hasSider={false} style={{ backgroundColor: "#f0f2f5" }}>
+        <Header style={{ backgroundColor: "#f0f2f5" }}>
           <OurHeader />
         </Header>
         <Content align="center">
