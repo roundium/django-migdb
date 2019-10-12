@@ -1,5 +1,4 @@
 import React from "react";
-import Field from "./Field";
 import { Collapse } from "antd";
 
 const { Panel } = Collapse;
@@ -12,8 +11,6 @@ export default class FieldsList extends React.Component {
       model_name: "",
       app_name: "",
     };
-    this.save_new_model_name = this.save_new_model_name.bind(this);
-    this.dump_data_btn = this.dump_data_btn.bind(this);
   }
 
   componentDidMount() {
@@ -29,20 +26,11 @@ export default class FieldsList extends React.Component {
       .catch(err => console.log(err));
   }
 
-  dump_data_btn(e) {
-    e.preventDefault();
-    // TODO: read the state and send it to server to dump data.
-  }
-
-  save_new_model_name(e) {
-    this.setState({
-      new_model_name: e.target.value,
-    });
-  }
-
   render() {
     let fields = this.state.fields.map((field, i) => (
-      <Field field={field} id={i} key={i} />
+      <Panel header={field.name} key={i}>
+        <p>{field.name}</p>
+      </Panel>
     ));
     return <Collapse accordion>{fields}</Collapse>;
   }
