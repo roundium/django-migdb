@@ -17,6 +17,12 @@ export default class FieldsList extends React.Component {
     };
   }
 
+  onChangeAction = (e, field, state_index) => {
+    console.log(e, field, state_index);
+    // TODO: change state if user change the action.
+    // render other stuff, if user select an action.
+  };
+
   startDumpData = () => {
     this.setState({ iconLoading: !this.state.iconLoading });
     // TODO: generate json from user settings and send it to server to dump data.
@@ -46,7 +52,11 @@ export default class FieldsList extends React.Component {
         <Row>
           <Col span={8}>
             <InputGroup compact>
-              <Select style={{ width: "100%" }} defaultValue="SelectAction">
+              <Select
+                onChange={e => this.onChangeAction(e, field.name, i)}
+                style={{ width: "100%" }}
+                defaultValue="SelectAction"
+              >
                 <Option disabled value="SelectAction">
                   Select an Action for {field.name}
                 </Option>
@@ -59,8 +69,7 @@ export default class FieldsList extends React.Component {
               </Select>
             </InputGroup>
           </Col>
-          <Col span={8}></Col>
-          <Col span={8}></Col>
+          <Col span={16}></Col>
         </Row>
       </Panel>
     ));
