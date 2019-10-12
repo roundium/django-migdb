@@ -24,6 +24,7 @@ export default class ModelsList extends React.Component {
           initLoading: false,
           loading: false,
         });
+        document.title = `Migdb - ${data.app_name} -> models`;
       })
       .catch(err => console.log(err));
   }

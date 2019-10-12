@@ -5,7 +5,7 @@ import { Layout } from "antd";
 
 import {
   Header as OurHeader,
-  Footer as OutFooter,
+  Footer as OurFooter,
   AppsList,
   ModelsList,
   FieldsList,
@@ -32,7 +32,7 @@ const App = () => {
           />
         </Content>
         <Footer align="center">
-          <OutFooter />
+          <OurFooter />
         </Footer>
       </Layout>
     </Router>
