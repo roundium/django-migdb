@@ -19,9 +19,11 @@ from .forms import ACTIONS, FieldForm
 from .templatetags.model_fields import (check_foriegn_key, check_many_to_many,
                                         check_one_2_one)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class Home(FormView):
     template_name = 'migdb/apps.html'
+
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
@@ -31,18 +33,20 @@ class Home(FormView):
         }
         return JsonResponse({"urls": data})
 
+
 def apps_list(request):
     apps_list = list(apps.get_app_configs())
-    apps_list = [item for item in apps_list if not isinstance(item, MigdbConfig)]
+    apps_list = [
+        item for item in apps_list if not isinstance(item, MigdbConfig)
+    ]
     data = []
     for app in apps_list:
-        data.append(
-            {
-                "name": app.name,
-                "label": app.label,
-            }
-        )
+        data.append({
+            "name": app.name,
+            "label": app.label,
+        })
     return JsonResponse({"apps": data})
+
 
 class ModelsList(FormView):
     template_name = 'migdb/models.html'
@@ -80,12 +84,13 @@ class ModelsList(FormView):
                 except ValueError:
                     pass
         if not action_type:
-            return render(request, self.template_name, {
-                "app_name": app_name,
-                'models': apps.all_models[app_name].items(),
-                "start_dumping": "Dumping is started.",
-                "new_app_name": new_app_name
-            })
+            return render(
+                request, self.template_name, {
+                    "app_name": app_name,
+                    'models': apps.all_models[app_name].items(),
+                    "start_dumping": "Dumping is started.",
+                    "new_app_name": new_app_name
+                })
         if action_type == "save_new_name":
             new_app_name = request.POST.get('app_name', None)
             if new_app_name:
@@ -107,12 +112,13 @@ class ModelsList(FormView):
         elif action_type == "dump":
             dump_thread = DumpGenerator(app_name)
             dump_thread.start()
-        return render(request, self.template_name, {
-            "app_name": app_name,
-            'models': apps.all_models[app_name].items(),
-            "start_dumping": "Dumping is started.",
-            "new_app_name": new_app_name
-        })
+        return render(
+            request, self.template_name, {
+                "app_name": app_name,
+                'models': apps.all_models[app_name].items(),
+                "start_dumping": "Dumping is started.",
+                "new_app_name": new_app_name
+            })
 
 
 def generate_field_json_res(field):
@@ -121,7 +127,8 @@ def generate_field_json_res(field):
         "pk": field.primary_key,
         "fk": check_foriegn_key(field),
         "m2m": check_many_to_many(field),
-        "o2o": check_one_2_one(field)
+        "o2o": check_one_2_one(field),
+        "action": {},
     }
 
 
@@ -133,7 +140,10 @@ class FieldsList(FormView):
         app_name = kwargs.get("app_name", None)
         model_name = kwargs.get("model_name", None)
         if app_name is None or model_name is None:
-            return JsonResponse({"data": {"error": "send both app and model name"}})
+            return JsonResponse(
+                {"data": {
+                    "error": "send both app and model name"
+                }})
 
         model = apps.get_model(app_label=app_name, model_name=model_name)
 
@@ -146,9 +156,15 @@ class FieldsList(FormView):
         ]
         fields = []
         data = {
-            "fields": [generate_field_json_res(field) for field in model._meta.get_fields() if type(field) not in ignore_field_types],
-            "app_name": app_name,
-            "model_name": model_name
+            "fields": [
+                generate_field_json_res(field)
+                for field in model._meta.get_fields()
+                if type(field) not in ignore_field_types
+            ],
+            "app_name":
+            app_name,
+            "model_name":
+            model_name
         }
 
         return JsonResponse(data)
@@ -165,9 +181,13 @@ class FieldsList(FormView):
             context['app_name'] = app_name
             context['model_name'] = model_name
             context['new_app_name'] = new_app_name
-            context["fields"] = [field for field in model._meta.get_fields() if not isinstance(field, ManyToOneRel)]
+            context["fields"] = [
+                field for field in model._meta.get_fields()
+                if not isinstance(field, ManyToOneRel)
+            ]
             context['actions'] = ACTIONS
-            context['message'] = 'Please Fill all fields and then submit the form.'
+            context[
+                'message'] = 'Please Fill all fields and then submit the form.'
             return render(request, self.template_name, context)
 
         new_model_name = request.POST.get("new_model_name", model_name)
@@ -207,4 +227,5 @@ class FieldsList(FormView):
         with open(file_name, 'w') as the_file:
             the_file.write(json.dumps(data))
 
-        return redirect(reverse_lazy("migdb:models_list") + "?app_name=" + app_name)
+        return redirect(
+            reverse_lazy("migdb:models_list") + "?app_name=" + app_name)
