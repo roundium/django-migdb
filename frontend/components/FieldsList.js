@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { Collapse, Input, Row, Col, Select, Button, Tooltip, Icon } from "antd";
+import InputElement from "./InputElement";
 
 const { Panel } = Collapse;
 const InputGroup = Input.Group;
@@ -18,24 +19,7 @@ export default class FieldsList extends React.Component {
     };
   }
 
-  onChangeAction = (e, field, state_index) => {
-    let fields = this.state.fields;
-    fields[state_index].action = {};
-    fields[state_index].action["type"] = e;
-    if (e === "conditional_replacement") {
-      fields[state_index].action["conditions"] = [
-        { current_value: "", new_value: "", id: id++ },
-      ];
-    }
-    this.setState({ fields });
-  };
-
-  startDumpData = () => {
-    // this.setState({ iconLoading: !this.state.iconLoading });
-    console.log(this.state.fields);
-    // TODO: generate json from user settings and send it to server to dump data.
-  };
-
+  // send the ajax request for get the fields list
   componentDidMount() {
     fetch("")
       .then(res => res.json())
@@ -50,11 +34,59 @@ export default class FieldsList extends React.Component {
       .catch(err => console.log(err));
   }
 
+  /** if you choose an action for an field, this method will change the state.
+   * @e {ref} is the action value that user selected.
+   * @state_index {int} is the field index number in state fields array.
+   * @field {Object} is the field object => { type: "action_type", ... }
+   */
+  onChangeAction = (e, field, state_index) => {
+    let fields = this.state.fields;
+    // cleanup the previous action object
+    fields[state_index].action = {};
+    fields[state_index].action["type"] = e;
+
+    // add more data to the action in some cases
+    if (e === "conditional_replacement") {
+      fields[state_index].action["conditions"] = [
+        { current_value: "", new_value: "", id: id++ },
+      ];
+    } else if (e === "conditional_replacement_rename") {
+      fields[state_index].action["conditions"] = [
+        { current_value: "", new_value: "", id: id++ },
+      ];
+    }
+
+    this.setState({ fields });
+  };
+
+  // when user clicked on Dump button this event listner will be fired.
+  startDumpData = () => {
+    // this.setState({ iconLoading: !this.state.iconLoading });
+    console.log(this.state.fields);
+    // TODO: show a modal and ask for new model and app name.
+    // TODO: generate json from user settings and send it to server to dump data.
+  };
+
+  /** when user change the inputs this event listner will handle the value changes and save it in state.
+   * @e {ref} is the input element ref.
+   * @obj_name {string} is the key name that input value will save in it.
+   * @state_index {int} is the field index number in state fields array.
+   * WARNING: this event listner will not fired for 'Conditional Replacement' inputs.
+   */
   onChangeForInputs = (e, obj_name, state_index) => {
     let fields = this.state.fields;
     fields[state_index].action[obj_name] = e.target.value;
     this.setState({ fields });
   };
+
+  /** when user change the inputs of 'Conditional Replacement' actions this event listner will handle the value changes
+   * and save it in state.
+   * @e {ref} is the input element ref.
+   * @obj_name {string} is the key name that input value will save in it.
+   * @state_index {int} is the field index number in state fields array.
+   * @condition_index {int} conditions is array, so we also need the condition index to change the current and new value of it.
+   * WARNING: this event listner will not fired for 'Conditional Replacement' inputs.
+   */
   onChangeForInputsConditionalReplacement = (
     e,
     obj_name,
@@ -66,50 +98,6 @@ export default class FieldsList extends React.Component {
     conditions[condition_index][obj_name] = e.target.value;
     fields[state_index].action.conditions = conditions;
     this.setState({ fields });
-  };
-
-  generateInputElement = (
-    placeholder,
-    toolTipTitle,
-    obj_name,
-    state_index,
-    condition_index = null,
-    defaultInputValue = null
-  ) => {
-    if (condition_index === null) {
-      return (
-        <Input
-          placeholder={placeholder}
-          defaultValue={defaultInputValue || ""}
-          onChange={e => this.onChangeForInputs(e, obj_name, state_index)}
-          suffix={
-            <Tooltip title={toolTipTitle}>
-              <Icon type="info-circle" style={{ color: "rgba(0,0,0,.45)" }} />
-            </Tooltip>
-          }
-        />
-      );
-    } else {
-      return (
-        <Input
-          defaultValue={defaultInputValue || ""}
-          placeholder={placeholder}
-          onChange={e =>
-            this.onChangeForInputsConditionalReplacement(
-              e,
-              obj_name,
-              state_index,
-              condition_index
-            )
-          }
-          suffix={
-            <Tooltip title={toolTipTitle}>
-              <Icon type="info-circle" style={{ color: "rgba(0,0,0,.45)" }} />
-            </Tooltip>
-          }
-        />
-      );
-    }
   };
 
   addConditionalReplacementItem = state_index => {
@@ -125,62 +113,85 @@ export default class FieldsList extends React.Component {
   removeConditionalReplacementItem = (state_index, condition_index) => {
     let fields = this.state.fields;
     let conditions = fields[state_index].action.conditions.filter(
-      (item, i) => i !== condition_index
+      (_, i) => i !== condition_index
     );
     fields[state_index].action.conditions = conditions;
     this.setState({ fields });
   };
 
   changeActionReaction = (field, state_index) => {
-    if (field.action === {}) {
+    if (Object.keys(field.action).length === 0) {
       return;
     } else if (field.action.type === "rename") {
       return (
         <Col style={{ textAlign: "center", paddingLeft: "10px" }}>
-          {this.generateInputElement(
-            "Enter Field New Name",
-            "Field new name. rename username to email for example.",
-            "new_field_name",
-            state_index
-          )}
+          <InputElement
+            placeholder="Enter Field New Name"
+            toolTipTitle="Field new name. rename username to email for example."
+            obj_name="new_field_name"
+            state_index={state_index}
+            onChangeCallBackFunc={this.onChangeForInputs}
+          />
         </Col>
       );
     } else if (field.action.type === "format") {
       return (
         <Col style={{ textAlign: "center", paddingLeft: "10px" }}>
-          {this.generateInputElement(
-            "Enter Field Format String",
-            "Field Format String. {{ field_name_from_model }}",
-            "format_value",
-            state_index
-          )}
+          <InputElement
+            placeholder="Enter Field Format String"
+            toolTipTitle="Field Format String. {{ field_name_from_model }}"
+            obj_name="format_value"
+            state_index={state_index}
+            onChangeCallBackFunc={this.onChangeForInputs}
+          />
         </Col>
       );
     } else if (field.action.type === "format_rename") {
       return (
         <Row>
           <Col span={12} style={{ textAlign: "center", paddingLeft: "10px" }}>
-            {this.generateInputElement(
-              "Enter Field New Name",
-              "Field new name. rename username to email for example.",
-              "new_field_name",
-              state_index
-            )}
+            <InputElement
+              placeholder="Enter Field New Name"
+              toolTipTitle="Field new name. rename username to email for example."
+              obj_name="new_field_name"
+              state_index={state_index}
+              onChangeCallBackFunc={this.onChangeForInputs}
+            />
           </Col>
           <Col span={12} style={{ textAlign: "center", paddingLeft: "10px" }}>
-            {this.generateInputElement(
-              "Enter Field Format String",
-              "Field Format String. {{ field_name_from_model }}",
-              "format_value",
-              state_index
-            )}
+            <InputElement
+              placeholder="Enter Field Format String"
+              toolTipTitle="Field Format String. {{ field_name_from_model }}"
+              obj_name="format_value"
+              state_index={state_index}
+              onChangeCallBackFunc={this.onChangeForInputs}
+            />
           </Col>
         </Row>
       );
-    } else if (field.action.type === "conditional_replacement") {
+    } else if (field.action.type.startsWith("conditional_replacement")) {
       let field_conditions = this.state.fields[state_index].action.conditions;
       let components = field_conditions.map((condition, i) => (
         <Fragment key={condition.id}>
+          {field.action.type.endsWith("_rename") && i === 0 && (
+            <Col
+              span={24}
+              style={{
+                textAlign: "center",
+                paddingLeft: "10px",
+                paddingBottom: "10px",
+              }}
+            >
+              <InputElement
+                placeholder="Enter Field New Name"
+                toolTipTitle="Field new name. rename username to email for example."
+                obj_name="new_field_name"
+                state_index={state_index}
+                onChangeCallBackFunc={this.onChangeForInputs}
+                defaultInputValue={field.action.new_field_name}
+              />
+            </Col>
+          )}
           <Col
             span={10}
             style={{
@@ -189,14 +200,17 @@ export default class FieldsList extends React.Component {
               paddingBottom: "10px",
             }}
           >
-            {this.generateInputElement(
-              "Enter Field Current Value",
-              "Field Current Value",
-              "current_value",
-              state_index,
-              i,
-              condition.current_value
-            )}
+            <InputElement
+              placeholder="Enter Field Current Value"
+              toolTipTitle="Field Current Value"
+              obj_name="current_value"
+              state_index={state_index}
+              onChangeCallBackFunc={
+                this.onChangeForInputsConditionalReplacement
+              }
+              condition_index={i}
+              defaultInputValue={condition.current_value}
+            />
           </Col>
           <Col
             span={10}
@@ -206,14 +220,17 @@ export default class FieldsList extends React.Component {
               paddingBottom: "10px",
             }}
           >
-            {this.generateInputElement(
-              "Enter Field New Value. Also Can Use Formating",
-              "Field Format String. {{ field_name_from_model }}",
-              "new_value",
-              state_index,
-              i,
-              condition.new_value
-            )}
+            <InputElement
+              placeholder="Enter Field New Value. Also Can Use Formating"
+              toolTipTitle="Field Format String. {{ field_name_from_model }}"
+              obj_name="new_value"
+              state_index={state_index}
+              onChangeCallBackFunc={
+                this.onChangeForInputsConditionalReplacement
+              }
+              condition_index={i}
+              defaultInputValue={condition.current_value}
+            />
           </Col>
           {i < field_conditions.length - 1 && (
             <Col span={4} style={{ textAlign: "left", paddingLeft: "10px" }}>
@@ -270,6 +287,9 @@ export default class FieldsList extends React.Component {
                 <Option value="format_rename">Format And Rename</Option>
                 <Option value="conditional_replacement">
                   Conditional Replacement
+                </Option>
+                <Option value="conditional_replacement_rename">
+                  Conditional Replacement And Rename
                 </Option>
                 <Option value="delete">Delete</Option>
                 <Option value="set_null">Set Null</Option>
