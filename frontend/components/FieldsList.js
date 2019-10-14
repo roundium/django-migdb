@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Collapse, Input, Row, Col, Select, Button, Tooltip, Icon } from "antd";
+import { Collapse, Input, Row, Col, Select, Button, Icon } from "antd";
 import InputElement from "./InputElement";
 
 const { Panel } = Collapse;
@@ -100,6 +100,12 @@ export default class FieldsList extends React.Component {
     this.setState({ fields });
   };
 
+  /**
+   * click on add button in Conditional Replacements action will fire this method.
+   * this method will add a condition object to the field.action.conditions array.
+   * @state_index is the field object index in state fields array.
+   * NOTE: we use id key for react child keys. do not use item index in array. it come's from a global variable.
+   */
   addConditionalReplacementItem = state_index => {
     let fields = this.state.fields;
     fields[state_index].action.conditions.push({
@@ -110,6 +116,11 @@ export default class FieldsList extends React.Component {
     this.setState({ fields });
   };
 
+  /**
+   * this method will fired when user want to delete an condition. it's onClick callback for minus icons.
+   * @state_index field item index in state fields array
+   * @condition_index is the index of a specific condition in field.action.conditions array
+   */
   removeConditionalReplacementItem = (state_index, condition_index) => {
     let fields = this.state.fields;
     let conditions = fields[state_index].action.conditions.filter(
@@ -119,6 +130,12 @@ export default class FieldsList extends React.Component {
     this.setState({ fields });
   };
 
+  /**
+   * when the field action has change this method will create new InputElements base on the action type that user
+   * selected.about
+   * @field the field object => {action: Object, name: "name", fk: true | false, m2m: true | false, o2o: true | false, pk: true | false}.
+   * @state_index is the field object item index in state fields array.
+   */
   changeActionReaction = (field, state_index) => {
     if (Object.keys(field.action).length === 0) {
       return;
