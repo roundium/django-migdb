@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { Collapse, Input, Row, Col, Select, Button, Icon } from "antd";
 import InputElement from "./InputElement";
+import DumpModal from "./DumpModal";
 
 const { Panel } = Collapse;
 const InputGroup = Input.Group;
@@ -16,6 +17,9 @@ export default class FieldsList extends React.Component {
       model_name: "",
       app_name: "",
       iconLoading: false,
+      visibleModal: false,
+      startDumpLoading: false,
+      disableInputs: false,
     };
   }
 
@@ -60,11 +64,10 @@ export default class FieldsList extends React.Component {
   };
 
   // when user clicked on Dump button this event listner will be fired.
-  startDumpData = () => {
-    // this.setState({ iconLoading: !this.state.iconLoading });
-    console.log(this.state.fields);
-    // TODO: show a modal and ask for new model and app name.
-    // TODO: generate json from user settings and send it to server to dump data.
+  showModel = () => {
+    this.setState({
+      visibleModal: true,
+    });
   };
 
   /** when user change the inputs this event listner will handle the value changes and save it in state.
@@ -280,6 +283,27 @@ export default class FieldsList extends React.Component {
     }
   };
 
+  // if user clicked on ok in Final Settings Model, this method will be fired.
+  // we generate and send json data here.
+  handleOk = () => {
+    this.setState({ startDumpLoading: true, disableInputs: true });
+    // this.setState({
+    //   visibleModal: false,
+    //   startDumpLoading: false,
+    //   disableInputs: false,
+    // });
+    // TODO: send the json data to the server.
+  };
+
+  // if user clicked on cancel in Final Settings Model, this method will fired.
+  handleCancel = () => {
+    this.setState({
+      visibleModal: false,
+      startDumpLoading: false,
+      disableInputs: false,
+    });
+  };
+
   render() {
     let fields = this.state.fields.map((field, i) => (
       <Panel
@@ -320,6 +344,13 @@ export default class FieldsList extends React.Component {
         </Row>
       </Panel>
     ));
+    const {
+      visibleModal,
+      startDumpLoading,
+      model_name,
+      app_name,
+      disableInputs,
+    } = this.state;
     return (
       <Fragment>
         <Collapse accordion>{fields}</Collapse>
@@ -332,15 +363,24 @@ export default class FieldsList extends React.Component {
           }}
         >
           <Button
-            icon="save"
+            icon="check"
             type="primary"
             shape="round"
             loading={this.state.iconLoading}
-            onClick={this.startDumpData}
+            onClick={this.showModel}
           >
-            Dump
+            Done
           </Button>
         </Col>
+        <DumpModal
+          visibleModal={visibleModal}
+          handleOk={this.handleOk}
+          startDumpLoading={startDumpLoading}
+          handleCancel={this.handleCancel}
+          model_name={model_name}
+          app_name={app_name}
+          disableInputs={disableInputs}
+        />
       </Fragment>
     );
   }
