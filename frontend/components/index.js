@@ -5,3 +5,4 @@ export { default as ModelsList } from "./ModelsList";
 export { default as FieldsList } from "./FieldsList";
 export { default as DumpModal } from "./DumpModal";
 export { default as InputElement } from "./InputElement";
+export { default as openNotification } from "./notification";

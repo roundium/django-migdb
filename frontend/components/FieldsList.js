@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Collapse, Input, Row, Col, Select, Button, Icon } from "antd";
-import { InputElement, DumpModal } from "./";
+import { InputElement, DumpModal, openNotification } from "./";
 import { styles, options } from "../constants";
 
 const { Panel } = Collapse;
@@ -23,8 +23,7 @@ export default class FieldsList extends React.Component {
     };
   }
 
-  // send the ajax request for get the fields list
-  componentDidMount() {
+  getFieldsListFromServer = () => {
     fetch("")
       .then(res => res.json())
       .then(data => {
@@ -35,7 +34,19 @@ export default class FieldsList extends React.Component {
         });
         document.title = `Migdb - ${data.app_name} -> ${data.model_name} -> fields`;
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        openNotification(
+          "Error while getting fields list.",
+          "make sure that backed server is running...",
+          <Icon type="frown" style={{ color: "red" }} />,
+          this.getFieldsListFromServer
+        );
+      });
+  };
+
+  // send the ajax request for get the fields list
+  componentDidMount() {
+    this.getFieldsListFromServer();
   }
 
   /** if you choose an action for an field, this method will change the state.
