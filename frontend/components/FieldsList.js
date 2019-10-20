@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Collapse, Input, Row, Col, Select, Button, Icon } from "antd";
-import InputElement from "./InputElement";
-import DumpModal from "./DumpModal";
+import { InputElement, DumpModal } from "./";
+import { styles } from "../constants";
 
 const { Panel } = Collapse;
 const InputGroup = Input.Group;
@@ -88,7 +88,6 @@ export default class FieldsList extends React.Component {
    * @obj_name {string} is the key name that input value will save in it.
    * @state_index {int} is the field index number in state fields array.
    * @condition_index {int} conditions is array, so we also need the condition index to change the current and new value of it.
-   * WARNING: this event listner will not fired for 'Conditional Replacement' inputs.
    */
   onChangeForInputsConditionalReplacement = (
     e,
@@ -135,7 +134,7 @@ export default class FieldsList extends React.Component {
 
   /**
    * when the field action has change this method will create new InputElements base on the action type that user
-   * selected.about
+   * selected.
    * @field the field object => {action: Object, name: "name", fk: true | false, m2m: true | false, o2o: true | false, pk: true | false}.
    * @state_index is the field object item index in state fields array.
    */
@@ -144,7 +143,7 @@ export default class FieldsList extends React.Component {
       return;
     } else if (field.action.type === "rename") {
       return (
-        <Col style={{ textAlign: "center", paddingLeft: "10px" }}>
+        <Col style={styles.Input}>
           <InputElement
             placeholder="Enter Field New Name"
             toolTipTitle="Field new name. rename username to email for example."
@@ -156,7 +155,7 @@ export default class FieldsList extends React.Component {
       );
     } else if (field.action.type === "format") {
       return (
-        <Col style={{ textAlign: "center", paddingLeft: "10px" }}>
+        <Col style={styles.Input}>
           <InputElement
             placeholder="Enter Field Format String"
             toolTipTitle="Field Format String. {{ field_name_from_model }}"
@@ -169,7 +168,7 @@ export default class FieldsList extends React.Component {
     } else if (field.action.type === "format_rename") {
       return (
         <Row>
-          <Col span={12} style={{ textAlign: "center", paddingLeft: "10px" }}>
+          <Col span={12} style={styles.Input}>
             <InputElement
               placeholder="Enter Field New Name"
               toolTipTitle="Field new name. rename username to email for example."
@@ -178,7 +177,7 @@ export default class FieldsList extends React.Component {
               onChangeCallBackFunc={this.onChangeForInputs}
             />
           </Col>
-          <Col span={12} style={{ textAlign: "center", paddingLeft: "10px" }}>
+          <Col span={12} style={styles.Input}>
             <InputElement
               placeholder="Enter Field Format String"
               toolTipTitle="Field Format String. {{ field_name_from_model }}"
@@ -194,14 +193,7 @@ export default class FieldsList extends React.Component {
       let components = field_conditions.map((condition, i) => (
         <Fragment key={condition.id}>
           {field.action.type.endsWith("_rename") && i === 0 && (
-            <Col
-              span={24}
-              style={{
-                textAlign: "center",
-                paddingLeft: "10px",
-                paddingBottom: "10px",
-              }}
-            >
+            <Col span={24} style={styles.ConditionalReplacementFieldNewName}>
               <InputElement
                 placeholder="Enter Field New Name"
                 toolTipTitle="Field new name. rename username to email for example."
@@ -212,14 +204,7 @@ export default class FieldsList extends React.Component {
               />
             </Col>
           )}
-          <Col
-            span={10}
-            style={{
-              textAlign: "center",
-              paddingLeft: "10px",
-              paddingBottom: "10px",
-            }}
-          >
+          <Col span={10} style={styles.ConditionalReplacementFields}>
             <InputElement
               placeholder="Enter Field Current Value"
               toolTipTitle="Field Current Value"
@@ -232,14 +217,7 @@ export default class FieldsList extends React.Component {
               defaultInputValue={condition.current_value}
             />
           </Col>
-          <Col
-            span={10}
-            style={{
-              textAlign: "center",
-              paddingLeft: "10px",
-              paddingBottom: "10px",
-            }}
-          >
+          <Col span={10} style={styles.ConditionalReplacementFields}>
             <InputElement
               placeholder="Enter Field New Value. Also Can Use Formating"
               toolTipTitle="Field Format String. {{ field_name_from_model }}"
@@ -253,10 +231,10 @@ export default class FieldsList extends React.Component {
             />
           </Col>
           {i < field_conditions.length - 1 && (
-            <Col span={4} style={{ textAlign: "left", paddingLeft: "10px" }}>
+            <Col span={4} style={styles.MinusIconCol}>
               <Icon
                 type="minus-circle-o"
-                style={{ fontSize: "24px", paddingTop: "4px", color: "#999" }}
+                style={styles.MinusIcon}
                 onClick={() =>
                   this.removeConditionalReplacementItem(state_index, i)
                 }
@@ -268,12 +246,12 @@ export default class FieldsList extends React.Component {
       return (
         <Row>
           {components}
-          <Col span={4} style={{ textAlign: "left", paddingLeft: "10px" }}>
+          <Col span={4} style={styles.Input}>
             <Button
               onClick={() => this.addConditionalReplacementItem(state_index)}
               icon="add"
               type="primary"
-              style={{ width: "100%" }}
+              style={styles.SelectOfActions}
             >
               <Icon type="plus" /> Add
             </Button>
@@ -306,17 +284,13 @@ export default class FieldsList extends React.Component {
 
   render() {
     let fields = this.state.fields.map((field, i) => (
-      <Panel
-        style={{ backgroundColor: "#f0f2f5", textAlign: "left" }}
-        header={field.name}
-        key={i}
-      >
+      <Panel style={styles.PanelOfActions} header={field.name} key={i}>
         <Row>
           <Col span={8}>
             <InputGroup compact>
               <Select
                 onChange={e => this.onChangeAction(e, field.name, i)}
-                style={{ width: "100%" }}
+                style={styles.SelectOfActions}
                 defaultValue={field.action.type || "SelectAction"}
               >
                 <Option disabled value="SelectAction">
@@ -354,14 +328,7 @@ export default class FieldsList extends React.Component {
     return (
       <Fragment>
         <Collapse accordion>{fields}</Collapse>
-        <Col
-          style={{
-            backgroundColor: "#f0f2f5",
-            textAlign: "left",
-            paddingTop: "10px",
-            paddingLeft: "10px",
-          }}
-        >
+        <Col style={styles.ColBtnDone}>
           <Button
             icon="check"
             type="primary"
