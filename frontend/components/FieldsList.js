@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Collapse, Input, Row, Col, Select, Button, Icon } from "antd";
 import { InputElement, DumpModal } from "./";
-import { styles } from "../constants";
+import { styles, options } from "../constants";
 
 const { Panel } = Collapse;
 const InputGroup = Input.Group;
@@ -296,21 +296,11 @@ export default class FieldsList extends React.Component {
                 <Option disabled value="SelectAction">
                   Select an Action for {field.name}
                 </Option>
-                <Option value="nochange">No Change</Option>
-                <Option value="rename">Rename</Option>
-                <Option value="format">Format</Option>
-                <Option value="format_rename">Format And Rename</Option>
-                <Option value="conditional_replacement">
-                  Conditional Replacement
-                </Option>
-                <Option value="conditional_replacement_rename">
-                  Conditional Replacement And Rename
-                </Option>
-                <Option value="delete">Delete</Option>
-                <Option value="set_null">Set Null</Option>
-                <Option value="set_true">Set True</Option>
-                <Option value="set_false">Set False</Option>
-                <Option value="set_empty_string">Set Empty String</Option>
+                {options.map(option => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
               </Select>
             </InputGroup>
           </Col>
