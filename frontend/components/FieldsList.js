@@ -282,7 +282,7 @@ export default class FieldsList extends React.Component {
     });
   };
 
-  render() {
+  getFieldsList = () => {
     let fields = this.state.fields.map((field, i) => (
       <Panel style={styles.PanelOfActions} header={field.name} key={i}>
         <Row>
@@ -308,6 +308,10 @@ export default class FieldsList extends React.Component {
         </Row>
       </Panel>
     ));
+    return fields;
+  };
+
+  render() {
     const {
       visibleModal,
       startDumpLoading,
@@ -317,7 +321,7 @@ export default class FieldsList extends React.Component {
     } = this.state;
     return (
       <Fragment>
-        <Collapse accordion>{fields}</Collapse>
+        <Collapse accordion>{this.getFieldsList()}</Collapse>
         <Col style={styles.ColBtnDone}>
           <Button
             icon="check"
