@@ -10,6 +10,7 @@ const DumpModal = props => {
     model_name,
     app_name,
     disableInputs,
+    inputsOnChange
   } = props;
   return (
     <Modal
@@ -25,9 +26,9 @@ const DumpModal = props => {
           <Input
             disabled={disableInputs}
             label="New App Name"
+            onChange={e => inputsOnChange("new_app_name", e.target.value)}
             placeholder="New App Name"
             defaultValue={app_name || ""}
-            // onChange={e => onChangeCallBackFunc(e, obj_name, state_index)}
             suffix={
               <Tooltip title="if the model app name has changed, change the name here">
                 <Icon type="info-circle" style={{ color: "rgba(0,0,0,.45)" }} />
@@ -40,9 +41,9 @@ const DumpModal = props => {
           <Input
             disabled={disableInputs}
             label="New Model Name"
+            onChange={e => inputsOnChange("new_model_name", e.target.value)}
             placeholder="New Model Name"
             defaultValue={model_name || ""}
-            // onChange={e => onChangeCallBackFunc(e, obj_name, state_index)}
             suffix={
               <Tooltip title="if the model name has changed, change the name here">
                 <Icon type="info-circle" style={{ color: "rgba(0,0,0,.45)" }} />

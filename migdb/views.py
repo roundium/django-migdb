@@ -2,15 +2,16 @@ import json
 import os
 
 from django.apps import apps
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models.fields.reverse_related import (ForeignObjectRel,
                                                      ManyToManyRel,
                                                      ManyToOneRel, OneToOneRel)
 from django.forms import formset_factory
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, TemplateView
 
 from .apps import MigdbConfig
@@ -20,20 +21,16 @@ from .templatetags.model_fields import (check_foriegn_key, check_many_to_many,
                                         check_one_2_one)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class Home(FormView):
+@method_decorator([
+    login_required,
+    user_passes_test(lambda user: user.is_superuser)
+], name="dispatch")
+class Home(TemplateView):
     template_name = 'migdb/apps.html'
 
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
 
-    def post(self, request, *args, **kwargs):
-        data = {
-            "base_url": reverse_lazy("migdb:home"),
-        }
-        return JsonResponse({"urls": data})
-
-
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
 def apps_list(request):
     apps_list = list(apps.get_app_configs())
     apps_list = [
@@ -48,102 +45,38 @@ def apps_list(request):
     return JsonResponse({"apps": data})
 
 
-class ModelsList(FormView):
-    template_name = 'migdb/models.html'
-
-    def get(self, request, *args, **kwargs):
-        app_name = kwargs.get("app_name", None)
-        file_name = "%s_structure.json" % app_name
-        new_app_name = ""
-        if os.path.isfile(file_name):
-            with open(file_name, 'r') as file:
-                try:
-                    file_structure = json.loads(file.read())
-                    new_app_name = file_structure['new_app_name']
-                except ValueError:
-                    pass
-        data = {
-            "app_name": app_name,
-            "new_app_name": new_app_name,
-            'models': [],
-        }
-        for name, model in apps.all_models[app_name].items():
-            data['models'].append(name)
-        return JsonResponse(data)
-
-    def post(self, request, *args, **kwargs):
-        app_name = request.GET.get("app_name", None)
-        file_name = "%s_structure.json" % app_name
-        action_type = request.POST.get("action_type", None)
-        new_app_name = ""
-        if os.path.isfile(file_name):
-            with open(file_name, 'r') as file:
-                try:
-                    file_structure = json.loads(file.read())
-                    new_app_name = file_structure['new_app_name']
-                except ValueError:
-                    pass
-        if not action_type:
-            return render(
-                request, self.template_name, {
-                    "app_name": app_name,
-                    'models': apps.all_models[app_name].items(),
-                    "start_dumping": "Dumping is started.",
-                    "new_app_name": new_app_name
-                })
-        if action_type == "save_new_name":
-            new_app_name = request.POST.get('app_name', None)
-            if new_app_name:
-                file_structure = {
-                    "app_name": app_name,
-                    "new_app_name": new_app_name,
-                    "models": []
-                }
-                if os.path.isfile(file_name):
-                    with open(file_name, 'r') as file:
-                        try:
-                            file_structure = json.loads(file.read())
-                            file_structure['new_app_name'] = new_app_name
-                        except ValueError:
-                            pass
-                dumped_data = json.dumps(file_structure)
-                with open(file_name, 'w') as file:
-                    file.write(dumped_data)
-        elif action_type == "dump":
-            dump_thread = DumpGenerator(app_name)
-            dump_thread.start()
-        return render(
-            request, self.template_name, {
-                "app_name": app_name,
-                'models': apps.all_models[app_name].items(),
-                "start_dumping": "Dumping is started.",
-                "new_app_name": new_app_name
-            })
-
-
-def generate_field_json_res(field):
-    return {
-        "name": field.name,
-        "pk": field.primary_key,
-        "fk": check_foriegn_key(field),
-        "m2m": check_many_to_many(field),
-        "o2o": check_one_2_one(field),
-        "action": {},
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def models_list(request, app_name):
+    data = {
+        "app_name": app_name,
+        'models': [],
     }
+    for name, model in apps.all_models[app_name].items():
+        data['models'].append(name)
+    return JsonResponse(data)
 
 
+@method_decorator([
+    csrf_exempt,
+    login_required,
+    user_passes_test(lambda user: user.is_superuser)
+], name="dispatch")
 class FieldsList(FormView):
-    template_name = 'migdb/fields.html'
-    form = formset_factory(FieldForm)
+    @staticmethod
+    def generate_field_json_res(field):
+        return {
+            "name": field.name,
+            "pk": field.primary_key,
+            "fk": check_foriegn_key(field),
+            "m2m": check_many_to_many(field),
+            "o2o": check_one_2_one(field),
+            "action": {},
+        }
 
     def get(self, request, *args, **kwargs):
-        app_name = kwargs.get("app_name", None)
-        model_name = kwargs.get("model_name", None)
-        if app_name is None or model_name is None:
-            return JsonResponse(
-                {"data": {
-                    "error": "send both app and model name"
-                }})
+        app_name = kwargs["app_name"]
+        model_name = kwargs["model_name"]
 
         model = apps.get_model(app_label=app_name, model_name=model_name)
 
@@ -157,75 +90,22 @@ class FieldsList(FormView):
         fields = []
         data = {
             "fields": [
-                generate_field_json_res(field)
+                self.generate_field_json_res(field)
                 for field in model._meta.get_fields()
                 if type(field) not in ignore_field_types
             ],
-            "app_name":
-            app_name,
-            "model_name":
-            model_name
+            "app_name": app_name,
+            "model_name": model_name
         }
-
         return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
-        app_name = request.GET.get("app_name", None)
-        model_name = request.GET.get("model_name", None)
-        new_app_name = request.GET.get("new_app_name", app_name)
+        data = request.POST.get("data", None)
+        model_name = request.POST.get("model_name", None)
+        new_model_name = request.POST.get("new_model_name", None)
+        app_name = request.POST.get("app_name", None)
+        new_app_name = request.POST.get("new_app_name", None)
 
-        formset = self.form(request.POST)
-        if not formset.is_valid():
-            model = apps.get_model(app_label=app_name, model_name=model_name)
-            context = {}
-            context['app_name'] = app_name
-            context['model_name'] = model_name
-            context['new_app_name'] = new_app_name
-            context["fields"] = [
-                field for field in model._meta.get_fields()
-                if not isinstance(field, ManyToOneRel)
-            ]
-            context['actions'] = ACTIONS
-            context[
-                'message'] = 'Please Fill all fields and then submit the form.'
-            return render(request, self.template_name, context)
-
-        new_model_name = request.POST.get("new_model_name", model_name)
-
-        data = {}
-        data['app_name'] = app_name
-        data['new_app_name'] = new_app_name
-        model_structure = {
-            'current_name': model_name,
-            'new_name': new_model_name,
-            'fields': []
-        }
-        for form in formset:
-            field_data = {k: v for k, v in form.cleaned_data.items() if v}
-            model_structure['fields'].append(field_data)
-        data['models'] = []
-        data['models'].append(model_structure)
-
-        file_name = "%s_structure.json" % app_name
-
-        if os.path.isfile(file_name):
-            with open(file_name, 'r') as the_file:
-                content = the_file.read()
-                try:
-                    content = json.loads(content)
-                    data = content
-                    if 'models' not in data:
-                        data['models'] = []
-                    for index in range(0, len(data['models'])):
-                        if data['models'][index]['current_name'] == model_name:
-                            del data['models'][index]
-                    data['models'].append(model_structure)
-                    data['app_name'] = app_name
-                    data['new_app_name'] = new_app_name
-                except ValueError:
-                    pass
-        with open(file_name, 'w') as the_file:
-            the_file.write(json.dumps(data))
-
-        return redirect(
-            reverse_lazy("migdb:models_list") + "?app_name=" + app_name)
+        if not data or not model_name or not new_model_name or not app_name or not new_app_name:
+            return HttpResponseBadRequest(content=json.dumps({"error": "bad request"}))
+        return JsonResponse({"status": "dumping thread is running..."})

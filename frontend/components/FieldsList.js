@@ -15,7 +15,9 @@ export default class FieldsList extends React.Component {
     this.state = {
       fields: [],
       model_name: "",
+      new_model_name: "",
       app_name: "",
+      new_app_name: "",
       iconLoading: false,
       visibleModal: false,
       startDumpLoading: false,
@@ -31,6 +33,8 @@ export default class FieldsList extends React.Component {
           fields: data.fields,
           model_name: data.model_name,
           app_name: data.app_name,
+          new_model_name: data.model_name,
+          new_app_name: data.app_name,
         });
         document.title = `Migdb - ${data.app_name} -> ${data.model_name} -> fields`;
       })
@@ -275,13 +279,29 @@ export default class FieldsList extends React.Component {
   // if user clicked on ok in Final Settings Model, this method will be fired.
   // we generate and send json data here.
   handleOk = () => {
+    const {
+      fields,
+      model_name,
+      new_model_name,
+      app_name,
+      new_app_name,
+    } = this.state;
     this.setState({ startDumpLoading: true, disableInputs: true });
-    // this.setState({
-    //   visibleModal: false,
-    //   startDumpLoading: false,
-    //   disableInputs: false,
-    // });
-    // TODO: send the json data to the server.
+    fetch("", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `data=${JSON.stringify(
+        fields
+      )}&model_name=${model_name}&new_model_name=${new_model_name}&app_name=${app_name}&new_app_name=${new_app_name}`,
+    }).then(res => {
+      this.setState({
+        visibleModal: false,
+        startDumpLoading: false,
+        disableInputs: false,
+      });
+    });
   };
 
   // if user clicked on cancel in Final Settings Model, this method will fired.
@@ -322,12 +342,18 @@ export default class FieldsList extends React.Component {
     return fields;
   };
 
+  onChangeForModalInputs = (key, value) => {
+    let data = {}
+    data[key] = value
+    this.setState(data)
+  }
+
   render() {
     const {
       visibleModal,
       startDumpLoading,
-      model_name,
-      app_name,
+      new_model_name,
+      new_app_name,
       disableInputs,
     } = this.state;
     return (
@@ -349,9 +375,10 @@ export default class FieldsList extends React.Component {
           handleOk={this.handleOk}
           startDumpLoading={startDumpLoading}
           handleCancel={this.handleCancel}
-          model_name={model_name}
-          app_name={app_name}
+          model_name={new_model_name}
+          app_name={new_app_name}
           disableInputs={disableInputs}
+          inputsOnChange={this.onChangeForModalInputs}
         />
       </Fragment>
     );

@@ -17,7 +17,6 @@ export default class ModelsList extends React.Component {
       .then(data => {
         this.setState({
           app_name: data.app_name,
-          new_app_name: data.new_app_name,
           items: data.models,
           error: false,
           initLoading: false,
