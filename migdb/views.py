@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, TemplateView
 
 from .apps import MigdbConfig
-from .dump import DumpGenerator
+from .dump import DumpGenerator, generate_dump_file
 from .forms import ACTIONS, FieldForm
 from .templatetags.model_fields import (check_foriegn_key, check_many_to_many,
                                         check_one_2_one)
@@ -111,4 +111,5 @@ class FieldsList(FormView):
                 content=json.dumps({"error": "bad request"}),
                 content_type="application/json"
             )
+        generate_dump_file(json.loads(data), app_name)
         return JsonResponse({"status": "dumping thread is running..."})

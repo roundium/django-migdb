@@ -287,23 +287,44 @@ export default class FieldsList extends React.Component {
       new_app_name,
     } = this.state;
     this.setState({ startDumpLoading: true, disableInputs: true });
+    const data = {
+      app_name: app_name,
+      new_app_name: new_app_name,
+      models: [
+        {
+          current_name: model_name,
+          new_name: new_model_name,
+          fields: fields.map(field => {
+            return {
+              current_field_name: field.name,
+              action: field.action.type || "nochange",
+              m2m: field.m2m,
+              o2o: field.o2o,
+              fk: field.fk,
+              primary_key: field.pk,
+              ...field.action,
+            };
+          }),
+        },
+      ],
+    };
     fetch("", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: `data=${JSON.stringify(
-        fields
+        data
       )}&model_name=${model_name}&new_model_name=${new_model_name}&app_name=${app_name}&new_app_name=${new_app_name}`,
     }).then(res => {
-      if(res.status >= 400){
+      if (res.status >= 400) {
         openNotification(
           "Error while sending request...",
           "",
-          <Icon type="frown" style={{ color: "red" }} />,
-        )
+          <Icon type="frown" style={{ color: "red" }} />
+        );
         this.setState({ startDumpLoading: false, disableInputs: false });
-      }else{
+      } else {
         this.setState({
           visibleModal: false,
           startDumpLoading: false,
@@ -352,10 +373,10 @@ export default class FieldsList extends React.Component {
   };
 
   onChangeForModalInputs = (key, value) => {
-    let data = {}
-    data[key] = value
-    this.setState(data)
-  }
+    let data = {};
+    data[key] = value;
+    this.setState(data);
+  };
 
   render() {
     const {
