@@ -13,6 +13,7 @@ const options = [
   { label: "Set True", value: "set_true" },
   { label: "Set False", value: "set_false" },
   { label: "Set Empty String", value: "set_empty_string" },
+  { label: "Set Empty Array", value: "set_empty_array" }
 ];
 
 export default options;

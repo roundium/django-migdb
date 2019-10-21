@@ -41,6 +41,20 @@ def generate_dump_file(file_content, app_name):
                 o2o_check = field.get('o2o', None)
                 primary_check = field.get('primary_key', False)
 
+                if action.startswith("set_"):
+                    if action == "set_null":
+                        temp_data['fields'][current_field_name] = None
+                    if action == "set_true":
+                        temp_data['fields'][current_field_name] = True
+                    if action == "set_false":
+                        temp_data['fields'][current_field_name] = False
+                    if action == "set_empty_string":
+                        temp_data['fields'][current_field_name] = ""
+                    if action == "set_empty_array":
+                        temp_data['fields'][current_field_name] = []
+                    # we will continue throgth the loop because those actions are forced.
+                    continue
+
                 # replace pk value if the primary key has changed
                 if primary_check:
                     pk_value = getattr(data_item, current_field_name)
@@ -111,14 +125,6 @@ def generate_dump_file(file_content, app_name):
                     elif action == "conditional_replacement_rename":
                         field_new_name = field['new_field_name']
                         temp_data['fields'][field_new_name] = final_value
-                if action == "set_null":
-                    temp_data['fields'][current_field_name] = None
-                if action == "set_true":
-                    temp_data['fields'][current_field_name] = True
-                if action == "set_false":
-                    temp_data['fields'][current_field_name] = False
-                if action == "set_empty_string":
-                    temp_data['fields'][current_field_name] = ""
                 else:
                     continue
             temp_data['pk'] = pk_value
