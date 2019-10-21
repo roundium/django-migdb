@@ -99,6 +99,26 @@ def generate_dump_file(file_content, app_name):
                     # if the field has formated and have the primary flag we have to replace the primary value with it.
                     if primary_check:
                         pk_value = final_value
+                elif action.startswith("conditional_replacement"):
+                    conditions = field['conditions']
+                    final_value = getattr(data_item, current_field_name)
+                    for condition in conditions:
+                        if final_value == condition["current_value"]:
+                            final_value = condition["new_value"]
+                            break
+                    if action == "conditional_replacement":
+                        temp_data['fields'][current_field_name] = final_value
+                    elif action == "conditional_replacement_rename":
+                        field_new_name = field['new_field_name']
+                        temp_data['fields'][field_new_name] = final_value
+                if action == "set_null":
+                    temp_data['fields'][current_field_name] = None
+                if action == "set_true":
+                    temp_data['fields'][current_field_name] = True
+                if action == "set_false":
+                    temp_data['fields'][current_field_name] = False
+                if action == "set_empty_string":
+                    temp_data['fields'][current_field_name] = ""
                 else:
                     continue
             temp_data['pk'] = pk_value
