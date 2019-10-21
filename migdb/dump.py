@@ -134,11 +134,15 @@ def generate_dump_file(file_content, app_name):
 
 
 class DumpGenerator(Thread):
-    def __init__(self, app_name):
+    def __init__(self, app_name, use_file=True, content=None):
         super(DumpGenerator, self).__init__()
         self.app_name = app_name
+        self.use_file = use_file
+        self.content = content
         self.file_name = "%s_structure.json" % app_name
 
     def run(self):
-        file_content = get_structure_file_content(self.file_name)
+        file_content = self.content
+        if self.use_file:
+            file_content = get_structure_file_content(self.file_name)
         generate_dump_file(file_content, self.app_name)
