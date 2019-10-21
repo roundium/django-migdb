@@ -107,5 +107,8 @@ class FieldsList(FormView):
         new_app_name = request.POST.get("new_app_name", None)
 
         if not data or not model_name or not new_model_name or not app_name or not new_app_name:
-            return HttpResponseBadRequest(content=json.dumps({"error": "bad request"}))
+            return HttpResponseBadRequest(
+                content=json.dumps({"error": "bad request"}),
+                content_type="application/json"
+            )
         return JsonResponse({"status": "dumping thread is running..."})

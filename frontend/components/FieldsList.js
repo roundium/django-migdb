@@ -296,11 +296,20 @@ export default class FieldsList extends React.Component {
         fields
       )}&model_name=${model_name}&new_model_name=${new_model_name}&app_name=${app_name}&new_app_name=${new_app_name}`,
     }).then(res => {
-      this.setState({
-        visibleModal: false,
-        startDumpLoading: false,
-        disableInputs: false,
-      });
+      if(res.status >= 400){
+        openNotification(
+          "Error while sending request...",
+          "",
+          <Icon type="frown" style={{ color: "red" }} />,
+        )
+        this.setState({ startDumpLoading: false, disableInputs: false });
+      }else{
+        this.setState({
+          visibleModal: false,
+          startDumpLoading: false,
+          disableInputs: false,
+        });
+      }
     });
   };
 
